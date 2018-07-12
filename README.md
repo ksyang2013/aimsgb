@@ -1,5 +1,3 @@
-# aimsgb
-
 Introduction
 ============
 aimsgb, an efficient and open-source Python library for generating atomic coordinates in periodic grain boundary models. It is designed to
