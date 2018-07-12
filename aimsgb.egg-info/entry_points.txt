@@ -1,4 +1,0 @@
-[console_scripts]
-agb = aimsgb.agb:main
-aimsgb = aimsgb.agb:main
-
