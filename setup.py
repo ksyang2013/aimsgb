@@ -15,6 +15,7 @@ setup(
     Principal Investigator (PI) = "Kesong YANG"
     PI_email="kesong@ucsd.edu",
     affliation="University of California San Diego"
+    address="9500 Gilman Dr., MC 0448, La Jolla, CA, 92093-0448, USA"
     maintainer="Jianli Cheng",
     maintainer_email="jic198@ucsd.edu",
     url="https://github.com/ksyang2013/aimsgb"
