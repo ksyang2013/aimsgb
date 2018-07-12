@@ -11,12 +11,15 @@ setup(
     setup_requires=["setuptools>=18.0"],
     install_requires=["pymatgen"],
     include_package_data=True,
-    author="Jianli Cheng",
-    author_email="jic198@ucsd.edu",
+    author="Jianli Cheng and Kesong YANG",
+    Principal Investigator (PI) = "Kesong YANG"
+    PI_email="kesong@ucsd.edu",
+    affliation="University of California San Diego"
     maintainer="Jianli Cheng",
     maintainer_email="jic198@ucsd.edu",
-    url="https://github.com/jic198/aimsgb",
+    url="https://github.com/ksyang2013/aimsgb"
     license="MIT",
+    copyright_notice="This software is Copyright © 2018 The Regents of the University of California. All Rights Reserved. See more in LICENSE." 
     description="aimsgb is a python library for generatng the atomic "
                 "coordinates of periodic grain boundaries.",
     long_description=long_desc,
