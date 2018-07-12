@@ -12,9 +12,7 @@ boundary structures as well.
 
 Install aimsgb
 ==============
-The version at the Python Package Index (PyPI) is always the latest stable
-release that is relatively bug-free. The easiest way to install aimsgb on
-any system is to use pip::
+1. Clone the latest version from github::
 
     pip install aimsgb
 
