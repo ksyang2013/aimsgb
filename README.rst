@@ -14,7 +14,20 @@ Install aimsgb
 ==============
 1. Clone the latest version from github::
 
-    pip install aimsgb
+    git clone git@github.com:ksyang2013/aimsgb.git
+
+2. Navigate to aimsgb folder::
+
+    cd aimsgb
+
+3. Type in the root of the repo::
+
+    pip install .
+
+or to install the package in development mode::
+    
+    pip install -e .
+
 
 Cite
 ====
