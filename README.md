@@ -4,7 +4,7 @@ aimsgb, an efficient and open-source Python library for generating atomic coordi
 construct various grain boundary structures from cubic and non-cubic initial
 configurations. A convenient command line tool has also been provided to enable
 easy and fast construction of tilt and twist boundaries by assigining the degree
-of fit (危), rotation axis, grain boundary plane and initial crystal structure.
+of fit (Σ), rotation axis, grain boundary plane and initial crystal structure.
 aimsgb is expected to greatly accelerate the theoretical investigation of
 grain boundary properties and facilitate the experimental analysis of grain
 boundary structures as well.
