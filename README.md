@@ -61,7 +61,8 @@ http://pymatgen.org/contributing.html#coding-guidelines
 
 Authors
 =======
-Dr. Jianli Cheng
+Dr. Jianli Cheng 
+
 Prof. Kesong Yang  (kesong@ucsd.edu)
 
 About the aimsgb Development Team
