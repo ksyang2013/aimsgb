@@ -10,7 +10,7 @@ grain boundary properties and facilitate the experimental analysis of grain
 boundary structures as well.
 
 
-Getting aimsgb
+Install aimsgb
 ==============
 The version at the Python Package Index (PyPI) is always the latest stable
 release that is relatively bug-free. The easiest way to install aimsgb on
