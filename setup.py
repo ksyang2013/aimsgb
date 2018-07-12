@@ -8,8 +8,8 @@ setup(
     name="aimsgb",
     packages=find_packages(),
     version="0.1.0",
-    setup_requires=['numpy>=1.14.3', 'setuptools>=18.0'],
-    install_requires=["numpy>=1.14.3", "pymatgen"],
+    setup_requires=["setuptools>=18.0"],
+    install_requires=["pymatgen"],
     include_package_data=True,
     author="Jianli Cheng",
     author_email="jic198@ucsd.edu",
@@ -18,7 +18,7 @@ setup(
     url="https://github.com/jic198/aimsgb",
     license="MIT",
     description="aimsgb is a python library for generatng the atomic "
-                "coordinates of grain boundaries.",
+                "coordinates of periodic grain boundaries.",
     long_description=long_desc,
     keywords=["material science", "grain boundary", "molecular simulation"],
     classifiers=[
@@ -37,6 +37,7 @@ setup(
     entry_points={
         'console_scripts': [
             'agb = aimsgb.agb:main',
+            'aimsgb = aimsgb.agb:main',
         ]
     }
 )

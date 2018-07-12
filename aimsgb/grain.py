@@ -28,28 +28,6 @@ class Grain(Structure):
 
         self._sites = list(self._sites)
 
-    # def rotate_sites(self, indices=None, theta=0,
-    #                  axis=(0, 0, 1), anchor=(0, 0, 0)):
-    #     from numpy.linalg import norm
-    #     from numpy import cross, radians, eye
-    #     from scipy.linalg import expm
-    #
-    #     if indices is None:
-    #         indices = range(len(self))
-    #     anchor = self._lattice.get_cartesian_coords(np.array(anchor))
-    #     axis = np.array(axis)
-    #     theta = radians(theta)
-    #     theta %= 2 * np.pi
-    #     rm = expm(cross(eye(3), axis / norm(axis)) * theta)
-    #
-    #     for i in indices:
-    #         site = self._sites[i]
-    #         s = ((rm * np.matrix(site.coords - anchor).T).T + anchor).A1
-    #         new_site = PeriodicSite(site.species_and_occu, s, self._lattice,
-    #                                 properties=site.properties,
-    #                                 coords_are_cartesian=True)
-    #         self._sites[i] = new_site
-
     def make_supercell(self, scaling_matrix):
         """
         Create a supercell. Very similar to pymatgen's Structure.make_supercell
@@ -57,7 +35,7 @@ class Grain(Structure):
         to 1 will become 0 and the lattice are redefined so that x_c = [0, 0, c]
 
         Args:
-            scaling_matrix: In our case, it is essentially the CSL matrix.
+            scaling_matrix (3x3 matrix): The scaling matrix to make supercell.
         """
         s = self * scaling_matrix
         for i, site in enumerate(s):
@@ -73,6 +51,17 @@ class Grain(Structure):
         self.modify_lattice(new_lat)
 
     def delete_bt_layer(self, bt, tol=0.25, axis=2):
+        """
+        Delete bottom or top layer of the structure.
+        Args:
+            bt (str): Specify whether it's a top or bottom layer delete. "b"
+                means bottom layer and "t" means top layer.
+            tol (float), Angstrom: Tolerance factor to determine whether two
+                atoms are at the same plane.
+                Default to 0.25
+            axis (int): The direction of top and bottom layers. 0: x, 1: y, 2: z
+
+        """
         if bt == "t":
             l1, l2 = (-1, -2)
         else:
@@ -99,13 +88,12 @@ class Grain(Structure):
 
     def sort_sites_in_layers(self, tol=0.25, axis=2):
         """
-        Sort the sites in a structure layer by layer. Useful when dealing with
-        different surface terminations
+        Sort the sites in a structure layer by layer.
 
         Args:
             tol (float): tolerance factor when determine whether two atoms are
                 are at the same plane. Angstrom
-            axis (str): sort along which axis
+            axis (int): The direction of top and bottom layers. 0: x, 1: y, 2: z
 
         Returns:
             Lists with the sites in the same plane as one list.
@@ -147,8 +135,9 @@ class Grain(Structure):
 
         Args:
             csl (3x3 matrix): CSL matrix (scaling matrix)
-            uc_a (int): number of unit cell of grain A
-            uc_b (int): number of unit cell of grain B
+            gb_direction (int): The direction of GB. 0: x, 1: y, 2: z
+            uc_a (int): Number of unit cell of grain A. Default to 1.
+            uc_b (int): Number of unit cell of grain B. Default to 1.
 
         Returns:
             Grain objects for grain A and B

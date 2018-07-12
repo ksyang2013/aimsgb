@@ -269,7 +269,7 @@ def orthogonalize_csl(csl, axis):
 class GBInformation(dict):
     """
     GBInformation object essentially consists of a dictionary with information
-    including sigma, CSL matrix, GB plane and rotation angle
+    including sigma, CSL matrix, GB plane, rotation angle and rotation matrix
     """
     def __init__(self, axis, max_sigma, specific=False):
         """
@@ -437,14 +437,15 @@ class GBInformation(dict):
     def get_rotate_matrix(self, angle):
         """
         use Rodrigues' rotation formula to get rotation matrix
+        https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
         """
         rotate_axis = np.array(self.axis / sqrt(inner(self.axis, self.axis)))
         angle = radians(angle)
-        omega = np.array([[0, -rotate_axis[2], rotate_axis[1]],
-                          [rotate_axis[2], 0, -rotate_axis[0]],
-                          [-rotate_axis[1], rotate_axis[0], 0]])
-        return identity(3) + omega * sin(angle) + \
-               np.dot(omega, omega) * (1 - cos(angle))
+        k_matrix = np.array([[0, -rotate_axis[2], rotate_axis[1]],
+                            [rotate_axis[2], 0, -rotate_axis[0]],
+                            [-rotate_axis[1], rotate_axis[0], 0]])
+        return identity(3) + k_matrix * sin(angle) + \
+               np.dot(k_matrix, k_matrix) * (1 - cos(angle))
 
     def get_csl_matrix(self, sigma, rotate_matrix):
         """
@@ -487,7 +488,7 @@ class GrainBoundary(object):
     crystal. If non-cubic, the crystal will be transferred to conventional cell.
     The generated GB could be either tilted or twisted based on the given GB
     plane. If the GB plane is parallel to the rotation axis, the generated GB
-    will be a twisted one. Otherwise, tilted. There could be multiple tilted GB.
+    will be a twisted one. Otherwise, tilted.
     """
     def __init__(self, axis, sigma, plane, initial_struct, uc_a=1, uc_b=1):
         """
@@ -499,11 +500,12 @@ class GrainBoundary(object):
             sigma (int): The area ratio between the unit cell of CSL and the
                 given crystal lattice.
             plane ([h, k, l]): Miller index of GB plane. If the GB plane is parallel
-                to the rotation axis, the generated GB will be a twisted one.
+                to the rotation axis, the generated GB will be a twist GB. If they
+                are perpendicular, the generated GB will be a tilt GB.
             initial_struct (Grain): Initial input structure. Must be an
                 object of Grain
-            uc_a (int): Unit cell of grain A
-            uc_b (int): Unit cell of grain B
+            uc_a (int): Number of unit cell of grain A. Default to 1.
+            uc_b (int): Number of unit cell of grain B. Default to 1.
         """
         if not isinstance(initial_struct, Grain):
             raise ValueError("The input 'initial_struct' must be an object "
@@ -547,14 +549,15 @@ class GrainBoundary(object):
     @property
     def rot_matrix(self):
         """
-        Rotation matrix for CSL matrix
+        Rotation matrix for calculating CSL matrix
         """
         return self.gb_info[self.sigma]["rot_matrix"]
 
     @property
     def theta(self):
         """
-        Rotation angle for rotation matrix
+        Rotation angle for calculating rotation matrix and to bring two grains
+        into a perfect match
         """
         return self.gb_info[self.sigma]["theta"]
 
@@ -598,11 +601,12 @@ class GrainBoundary(object):
                 Default to 0.0
             to_primitive (bool): Whether to get primitive structure of GB.
                 Default to true.
-            delete_layer (str): Delete surface layers on both sides of each grain.
+            delete_layer (str): Delete interface layers on both sides of each grain.
                 8 characters in total. The first 4 characters is for grain A and
                 the other 4 is for grain B. "b" means bottom layer and "t" means
                 top layer. Integer represents the number of layers to be deleted.
-                Default to "0b0t0b0t", which means no deletion of layers.
+                Default to "0b0t0b0t", which means no deletion of layers. The
+                direction of top and bottom layers is based on gb_direction.
             tol (float), Angstrom: Tolerance factor to determine whether two
                 atoms are at the same plane.
                 Default to 0.25

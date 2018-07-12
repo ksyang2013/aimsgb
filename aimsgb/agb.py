@@ -5,8 +5,7 @@ import sys
 import argparse
 import numpy as np
 
-from aimsgb import Grain
-from aimsgb import GBInformation, GrainBoundary, SIGMA_SYMBOL
+from aimsgb import Grain, GBInformation, GrainBoundary, SIGMA_SYMBOL
 
 __author__ = "Jianli Cheng, Kesong Yang"
 __copyright__ = "Copyright 2018, Yanggroup"
