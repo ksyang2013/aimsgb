@@ -19,7 +19,8 @@ setup(
     maintainer_email="jic198@ucsd.edu",
     url="https://github.com/ksyang2013/aimsgb"
     license="MIT",
-    copyright_notice="This software is Copyright © 2018 The Regents of the University of California. All Rights Reserved. See more in LICENSE." 
+    copyright_notice="This software is Copyright © 2018 The Regents of the University of California."
+                     "All Rights Reserved. See more in LICENSE." 
     description="aimsgb is a python library for generatng the atomic "
                 "coordinates of periodic grain boundaries.",
     long_description=long_desc,
