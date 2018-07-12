@@ -24,8 +24,8 @@ Install aimsgb
 
     pip install .
 
-or to install the package in development mode::
-    
+4. or to install the package in development mode::
+
     pip install -e .
 
 
@@ -37,7 +37,7 @@ If you use aimsgb for your work, please cite the paper:
 License
 =======
 
-Pymatgen is released under the MIT License. The terms of the license are as
+Aimsgb is released under the MIT License. The terms of the license are as
 follows::
 
     The MIT License (MIT)
