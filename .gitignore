@@ -1,3 +1,7 @@
+# Backup files
+*.bak
+*.orig
+
 # Byte-compiled / optimized / DLL files
 aimsgb.egg-info
 __pycache__/
