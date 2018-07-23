@@ -1,12 +1,13 @@
 import warnings
+warnings.filterwarnings("ignore")
 import numpy as np
 from functools import reduce
 from itertools import groupby
 from pymatgen import Structure, Lattice, PeriodicSite
 
-__author__ = "Jianli Cheng, Kesong Yang"
-__copyright__ = "Copyright 2018, Yanggroup"
-__maintainer__ = "Jianli Cheng"
+__author__ = "Jianli CHENG and Kesong YANG"
+__copyright__ = "Copyright 2018 University of California San Diego"
+__maintainer__ = "Jianli CHENG"
 __email__ = "jic198@ucsd.edu"
 __status__ = "Production"
 __date__ = "January 26, 2018"
