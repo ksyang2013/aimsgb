@@ -70,7 +70,7 @@ http://pymatgen.org/contributing.html#coding-guidelines
 
 Authors
 =======
-Dr. Jianli Cheng 
+Dr. Jianli Cheng (jianlicheng@lbl.gov)
 
 Prof. Kesong Yang  (kesong@ucsd.edu)
 
