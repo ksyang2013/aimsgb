@@ -5,7 +5,7 @@ import sys
 import argparse
 import numpy as np
 
-from aimsgb import Grain, GBInformation, GrainBoundary, SIGMA_SYMBOL
+from aimsgb import Grain, GBInformation, GrainBoundary
 
 __author__ = "Jianli Cheng, Kesong Yang"
 __copyright__ = "Copyright 2018, Yanggroup"
@@ -30,8 +30,8 @@ def gb(args):
     gb.build_gb(args.vacuum, args.add_if_dist, to_primitive, args.delete_layer,
                 args.tol).to(filename=args.out, fmt=args.fmt)
     print("CSL Matrix (det=%.1f):\n%s" % (np.linalg.det(gb.csl), gb.csl))
-    print("%s of %s%s[%s]/(%s) is created"
-          % (args.out, SIGMA_SYMBOL, gb.sigma, args.axis, gb.plane_str))
+    print("%s of sigma%s[%s]/(%s) is created"
+          % (args.out, gb.sigma, args.axis, gb.plane_str))
 
 
 def main():
@@ -40,49 +40,66 @@ def main():
     subparsers = parser.add_subparsers(help="command", dest="command")
 
     parser_gb_list = subparsers.add_parser(
-        "list", help="Show the values of %s, theta and GB plane\n"
-                     "E.g. agb list 001" % SIGMA_SYMBOL)
-    parser_gb_list.add_argument("axis", metavar="rotation-axis", type=str,
-                                help="The rotation axis of GB")
+        "list", help="Show the values of sigma, theta, GB plane and CSL matrix "
+                     "from a given rotation axis\nE.g. agb list 001",
+        formatter_class=argparse.RawTextHelpFormatter)
+    parser_gb_list.add_argument("axis", metavar="rotation axis", type=str,
+                                help="The rotation axis of GB\n"
+                                     "E.g. agb list 001")
     parser_gb_list.add_argument("sigma", default=30, type=int, nargs="?",
-                                help="Set the %s limit for on screen output "
-                                     % SIGMA_SYMBOL + "(default: %(default)s)")
+                                help="Set the sigma limit for on screen output "
+                                     "(default: %(default)s)\n"
+                                     "E.g. agb list 001 100")
     parser_gb_list.set_defaults(func=gb_list)
 
     parser_gb = subparsers.add_parser(
-        "gb", help="Build grain boundary based on rotation axis, sigma, "
-                   "GB plane, and grain size.\nE.g. agb gb 001 5 1 2 0 POSCAR")
-    parser_gb.add_argument("axis", metavar="rotation-axis", type=str,
-                           help="The rotation axis of GB")
+        "gb", help="Build grain boundary based on rotation axis, sigma, GB plane, "
+                   "and input structure file.\nThe user can also specify many "
+                   "optional arguments, such grain size and interface terminations."
+                   "\nE.g. agb gb 001 5 1 2 0 POSCAR"
+                   "\nE.g. agb gb 001 5 1 2 0 POSCAR -ua 2 -ub 3"
+                   "\nE.g. agb gb 001 5 1 2 0 POSCAR -ua 3 -ub 2 -dl 0b1t1b0t",
+        formatter_class=argparse.RawTextHelpFormatter)
+    parser_gb.add_argument("axis", metavar="rotation axis", type=str,
+                           help="The rotation axis of GB, E.g. 110")
     parser_gb.add_argument("sigma", type=int,
-                           help="Set the %s value for grain boundary." % SIGMA_SYMBOL)
+                           help="The sigma value for grain boundary, E.g. 3")
     parser_gb.add_argument("plane", type=int, nargs=3,
-                           help="Set the GB plane for grain boundary.")
+                           help="The GB plane for grain boundary, E.g. 1 1 0")
     parser_gb.add_argument("poscar", type=str,
-                           help="Set crystal structure for grain boundary.")
+                           help="The initial structure file for grain boundary.")
     parser_gb.add_argument("out", type=str, default="POSCAR", nargs="?",
-                           help="Set the output file. (default: %(default)s)")
+                           help="The output filename. (default: %(default)s)")
     parser_gb.add_argument("-ua", "--uc_a", default=1, type=int,
-                           help="Set the size (uc) for grain A. (default: %(default)s)")
+                           help="The size (uc) for grain A. (default: %(default)s)"
+                                "\nE.g. agb gb 001 5 1 2 0 POSCAR -ua 2")
     parser_gb.add_argument("-ub", "--uc_b", default=1, type=int,
-                           help="Set the size (uc) for grain B. (default: %(default)s)")
+                           help="The size (uc) for grain B. (default: %(default)s)"
+                                "\nE.g. agb gb 001 5 1 2 0 POSCAR -ub 2")
     parser_gb.add_argument("-dl", "--delete_layer", default="0b0t0b0t", type=str,
                            help="Delete bottom or top layers for each grain. "
-                                "(default: %(default)s)")
+                                "(default: %(default)s)"
+                                "\nE.g. agb gb 001 5 1 2 0 POSCAR -dl 0b1t1b0t")
     parser_gb.add_argument("-v", "--vacuum", default=0.0, type=float,
                            help="Set vacuum thickness for grain boundary. "
-                                "(default: %(default)s)")
+                                "(default: %(default)s angstrom)"
+                                "\nE.g. agb gb 001 5 1 2 0 POSCAR -v 20")
     parser_gb.add_argument("-t", "--tol", default=0.25, type=float,
-                           help="Tolerance factor to determine if two atoms are "
-                                "at the same plane. (default: %(default)s)")
+                           help="Tolerance factor to determine if two "
+                                "atoms are at the same plane. "
+                                "(default: %(default)s angstrom)"
+                                "\nE.g. agb gb 001 5 1 2 0 POSCAR -dl 0b1t1b0t -t 0.5")
     parser_gb.add_argument("-ad", "--add_if_dist", default=0.0, type=float,
                            help="Add extra distance between two grains. "
-                                "(default: %(default)s)")
+                                "(default: %(default)s angstrom)"
+                                "\nE.g. agb gb 001 5 1 2 0 POSCAR -ad 0.5")
     parser_gb.add_argument("-c", "--conventional", action="store_true",
-                           help="Get conventional GB, not primitive")
+                           help="Get conventional GB, not primitive"
+                                "\nE.g. agb gb 001 5 1 2 0 POSCAR -c")
     parser_gb.add_argument("-fmt", "--fmt", default="poscar", const="poscar",
                            nargs="?", choices=["poscar", "cif", "cssr", "json"],
-                           help="Choose the output format. (default: %(default)s)")
+                           help="Choose the output format. (default: %(default)s)"
+                                "\nE.g. agb gb 001 5 1 2 0 POSCAR -fmt cif")
     parser_gb.set_defaults(func=gb)
 
     args = parser.parse_args()
