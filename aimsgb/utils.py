@@ -72,7 +72,7 @@ def reduce_integer(integer):
     Get the odd number for an integer
     """
     while gcd(integer, 2) != 1:
-        integer /= 2
+        integer //= 2
     return integer
 
 

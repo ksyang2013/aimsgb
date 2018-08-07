@@ -24,7 +24,6 @@ __status__ = "Production"
 __date__ = "January 26, 2018"
 
 # SIGMA_SYMBOL = u'\u03A3'
-SIGMA_SYMBOL = 'Sigma'
 UNIMODULAR_MATRIX = np.array([identity(3),
                               [[1, 0, 1],
                                [0, 1, 0],
@@ -293,8 +292,8 @@ class GBInformation(dict):
     def __str__(self):
         axis_str = "".join(map(str, self.axis))
         outs = ["Grain boundary information for rotation axis: %s" % axis_str,
-                "Show the %s values up to %s (Note: * means twist GB)"
-                % (SIGMA_SYMBOL, self.max_sigma)]
+                "Show the sigma values up to %s (Note: * means twist GB)"
+                % (self.max_sigma)]
         data = []
         to_s = lambda x: "%.2f" % x
         for key, item in sorted(self.items()):
@@ -314,7 +313,7 @@ class GBInformation(dict):
                     row.extend(["(%s)" % plane_str, csl[count]])
                     data.append(row)
         outs.append(tabulate(data, numalign="center", tablefmt='orgtbl',
-                             headers=[SIGMA_SYMBOL, "Theta", "GB Plane", "CSL"]))
+                             headers=["Sigma", "Theta", "GB Plane", "CSL"]))
         # print(outs)
         # exit(0)
         return "\n".join(outs)

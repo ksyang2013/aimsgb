@@ -41,6 +41,8 @@ class Grain(Structure):
         s = self * scaling_matrix
         for i, site in enumerate(s):
             f_coords = np.mod(site.frac_coords, 1)
+            # The following for loop is probably not necessary. But I will leave
+            # it here for now.
             for j, v in enumerate(f_coords):
                 if abs(v - 1) < 1e-6:
                     f_coords[j] = 0
@@ -153,8 +155,9 @@ class Grain(Structure):
         grain_a.make_supercell(csl_t)
         if not all([i == 90 for i in grain_a.lattice.angles]):
             warnings.warn("The lattice system of the grain is not orthogonal. "
-                          "The generated GB could be wrong. "
-                          "Use at your own risk!")
+                          "The periodicity of the grain is most likely broken. "
+                          "We suggest user to build a very big supercell in "
+                          "order to minimize this effect.")
 
         grain_b = grain_a.copy()
         if sum(abs(csl_t[0]) - abs(csl_t[1])) > 0:
