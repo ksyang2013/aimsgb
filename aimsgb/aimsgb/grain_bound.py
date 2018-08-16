@@ -526,7 +526,6 @@ class GrainBoundary(object):
         for i, v in enumerate(self.csl.transpose()):
             if self.plane == list(v):
                 self.gb_direction = i
-
         abc = initial_struct.lattice.abc
         if abc[0] != abc[1] or \
                 any([i != 90 for i in initial_struct.lattice.angles]):
@@ -624,8 +623,8 @@ class GrainBoundary(object):
                     self.grain_a.delete_bt_layer(v[1], tol, ind)
                 else:
                     self.grain_b.delete_bt_layer(v[1], tol, ind)
-        # self.grain_a.to(filename="POSCAR_a")
-        # self.grain_b.to(filename="POSCAR_b")
+        self.grain_a.to(filename="POSCAR_a")
+        self.grain_b.to(filename="POSCAR_b")
         # exit(0)
         abc_a = list(self.grain_a.lattice.abc)
         abc_b, angles = self.grain_b.lattice.lengths_and_angles

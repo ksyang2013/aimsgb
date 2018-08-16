@@ -29,6 +29,19 @@ class Grain(Structure):
 
         self._sites = list(self._sites)
 
+    @staticmethod
+    def get_b_from_a(grain_a, csl):
+        grain_b = grain_a.copy()
+        csl_t = csl.transpose()
+        if sum(abs(csl_t[0]) - abs(csl_t[1])) > 0:
+            axis = (1, 0, 0)
+        else:
+            axis = (0, 1, 0)
+        # anchor = grain_b.lattice.get_cartesian_coords(np.array([.5, .5, .5]))
+        anchor = grain_b.lattice.get_cartesian_coords(np.array([.0, .0, .0]))
+        grain_b.rotate_sites(theta=np.radians(180), axis=axis, anchor=anchor)
+        return grain_b
+
     def make_supercell(self, scaling_matrix):
         """
         Create a supercell. Very similar to pymatgen's Structure.make_supercell
@@ -159,15 +172,7 @@ class Grain(Structure):
                           "We suggest user to build a very big supercell in "
                           "order to minimize this effect.")
 
-        grain_b = grain_a.copy()
-        if sum(abs(csl_t[0]) - abs(csl_t[1])) > 0:
-            axis = (1, 0, 0)
-        else:
-            axis = (0, 1, 0)
-        # anchor = grain_b.lattice.get_cartesian_coords(np.array([.5, .5, .5]))
-        anchor = grain_b.lattice.get_cartesian_coords(np.array([.0, .0, .0]))
-        grain_b.rotate_sites(theta=np.radians(180), axis=axis, anchor=anchor)
-        # grain_b.rotate_sites(theta=180, axis=axis, anchor=[.5, .5, .5])
+        grain_b = self.get_b_from_a(grain_a, csl)
         # grain_a.to(filename="POSCAR_a")
         # grain_b.to(filename="POSCAR_b")
         # exit(0)
