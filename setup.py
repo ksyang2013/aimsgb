@@ -14,7 +14,7 @@ setup(
     author="Jianli Cheng and Kesong YANG",
     maintainer="Jianli Cheng, Sicong JIANG, and Kesong YANG",
     maintainer_email="jic198@ucsd.edu; sij014@ucsd.edu; kesong@ucsd.edu",
-    url="https://github.com/ksyang2013/aimsgb",
+    url="http://aimsgb.org"
     description="aimsgb is a python library for generatng the atomic "
                 "coordinates of periodic grain boundaries."
                 "Copyright © 2018 The Regents of the University of California."
@@ -36,7 +36,6 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'agb = aimsgb.agb:main',
             'aimsgb = aimsgb.agb:main',
         ]
     }
