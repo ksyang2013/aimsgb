@@ -35,7 +35,7 @@ def gb(args):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="AIMSgb command line tools",
+    parser = argparse.ArgumentParser(description="aimsgb command line tools",
                                      formatter_class=argparse.RawTextHelpFormatter)
     subparsers = parser.add_subparsers(help="command", dest="command")
 
