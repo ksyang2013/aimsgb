@@ -13,6 +13,17 @@ __maintainer__ = "Jianli Cheng"
 __email__ = "jic198@ucsd.edu"
 __status__ = "Production"
 __date__ = "January 26, 2018"
+aimsgb_descript = """**************************************************************************************************
+       aimsgb - Ab-initio Interface Materials Simulation for Grain Boundaries (aimsgb.org)      
+                        VERSION 0.1  2017 - 2018                                    
+Aimsgb is one open-source python library to generate periodic grain boundary structures.    
+A reference for the usage of aimsgb software is:
+Jianli Cheng, Jian Luo, and Kesong Yang, Aimsgb: An Algorithm and Open-Source Python Library  
+to Generate Periodic Grain Boundary Structures, Comput. Mater. Sci. (in press)         
+**************************************************************************************************
+
+Aimsgb Command Line Tools 
+"""
 
 
 def gb_list(args):
@@ -35,8 +46,8 @@ def gb(args):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="aimsgb command line tools",
-                                     formatter_class=argparse.RawTextHelpFormatter)
+    parser = argparse.ArgumentParser(description=aimsgb_descript,
+	formatter_class=argparse.RawTextHelpFormatter)
     subparsers = parser.add_subparsers(help="command", dest="command")
 
     parser_gb_list = subparsers.add_parser(
