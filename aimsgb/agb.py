@@ -47,7 +47,7 @@ def gb(args):
 
 def main():
     parser = argparse.ArgumentParser(description=aimsgb_descript,
-	formatter_class=argparse.RawTextHelpFormatter)
+                                     formatter_class=argparse.RawTextHelpFormatter)
     subparsers = parser.add_subparsers(help="command", dest="command")
 
     parser_gb_list = subparsers.add_parser(

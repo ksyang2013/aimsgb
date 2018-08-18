@@ -37,7 +37,6 @@ class Grain(Structure):
             axis = (1, 0, 0)
         else:
             axis = (0, 1, 0)
-        # anchor = grain_b.lattice.get_cartesian_coords(np.array([.5, .5, .5]))
         anchor = grain_b.lattice.get_cartesian_coords(np.array([.0, .0, .0]))
         grain_b.rotate_sites(theta=np.radians(180), axis=axis, anchor=anchor)
         return grain_b
@@ -158,11 +157,7 @@ class Grain(Structure):
         Returns:
             Grain objects for grain A and B
         """
-        # print(csl)
-        # exit(0)
         csl_t = csl.transpose()
-        # print(csl_t)
-        # exit(0)
         # rotate along a longer axis between a and b
         grain_a = self.copy()
         grain_a.make_supercell(csl_t)
@@ -173,9 +168,6 @@ class Grain(Structure):
                           "order to minimize this effect.")
 
         grain_b = self.get_b_from_a(grain_a, csl)
-        # grain_a.to(filename="POSCAR_a")
-        # grain_b.to(filename="POSCAR_b")
-        # exit(0)
 
         scale_vector = [1, 1]
         scale_vector.insert(gb_direction, uc_a)

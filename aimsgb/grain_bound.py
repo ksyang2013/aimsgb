@@ -87,15 +87,11 @@ def o_lattice_to_csl(o_lattice, n):
      CSL matrix (3x3 array) in crystal coordinates
     """
     csl = o_lattice.copy()
-    # print(o_lattice, n)
-    # exit(0)
     if n < 0:
         csl[0] *= -1
         n *= -1
     while True:
         m = [get_smallest_multiplier(i) for i in csl]
-        # print(m)
-        # exit(0)
         m_prod = np.prod(m)
         if m_prod <= n:
             for i in range(3):
@@ -111,8 +107,6 @@ def o_lattice_to_csl(o_lattice, n):
                     if changed or i == j or m[i] == 1 or m[j] == 1:
                         continue
                     a, b = (i, j) if m[i] <= m[j] else (j, i)
-                    # print(a, b)
-                    # exit(0)
                     for k in plus_minus_gen(1, m[b]):
                         handle = csl[a] + k * csl[b]
                         if get_smallest_multiplier(handle) < m[a]:
@@ -126,8 +120,6 @@ def o_lattice_to_csl(o_lattice, n):
                     csl[i] *= m[i]
                 break
     csl = csl.round().astype(int)
-    # print(csl)
-    # exit(0)
 
     # Reshape CSL
     def simplify(l1, l2):
@@ -151,8 +143,6 @@ def o_lattice_to_csl(o_lattice, n):
                         break
         if not changed:
             break
-    # print(csl)
-    # exit(0)
     return csl
 
 
@@ -170,42 +160,25 @@ def orthogonalize_csl(csl, axis):
     u2 = y2/||y2||, y3 = v3 - [(v3 . u1)u1 + (v3 . u2)u2]
     u3 = y3/||y3||
     """
-    # print(csl)
-    # exit(0)
     axis = np.array(axis)
-    c = solve(csl.transpose(), axis)  # csl^T * c = axis
-    # print(c)
-    # exit(0)
+    c = solve(csl.transpose(), axis)
     if not is_integer(c):
         mult = get_smallest_multiplier(c)
         c *= mult
     c = c.round().astype(int)
-    # print(c)
-    # exit(0)
     ind = min([(i, v) for i, v in enumerate(c) if not np.allclose(v, 0)],
               key=lambda x: abs(x[1]))[0]
-    # print(ind)
-    # exit(0)
-    # print(csl)
-    # exit(0)
     if ind != 2:
-        # change sign to keep the same det
         csl[ind], csl[2] = csl[2].copy(), -csl[ind]
         c[ind], c[2] = c[2], -c[ind]
 
-    # print(c, csl)
-    # exit(0)
     csl[2] = np.dot(c, csl)
-    # print(csl)
-    # exit(0)
-    if c[2] < 0:  # sign of det was changed, change it again
+    if c[2] < 0:
         csl[1] *= -1
 
     def get_integer(vec):
         # Used vec = np.array(vec, dtype=float) before, but does not work for
         # [5.00000000e-01, -5.00000000e-01,  2.22044605e-16] in Sigma3[112]
-        # print(vec)
-        # exit(0)
         vec = np.round(vec, 12)
         vec_sign = np.array([1 if abs(i) == i else -1 for i in vec])
         vec = list(abs(vec))
@@ -223,28 +196,20 @@ def orthogonalize_csl(csl, axis):
             for i in range(len(vec) - 1):
                 frac = Fraction(vec[i] / vec[i + 1]).limit_denominator()
                 new_vec.extend([frac.numerator, frac.denominator])
-            # print(new_vec)
-            # exit(0)
             if new_vec[1] == new_vec[2]:
                 new_vec = [new_vec[0], new_vec[1], new_vec[3]]
             else:
                 new_vec = reduce_vector([new_vec[0] * new_vec[2],
                                          new_vec[1] * new_vec[2],
                                          new_vec[3] * new_vec[1]])
-        # print(new_vec)
-        # exit(0)
         assert is_integer(new_vec)
         return new_vec * vec_sign
 
-    # print(csl)
-    # exit(0)
     u1 = csl[2] / norm(csl[2])
     y2_1 = csl[1] - np.dot(csl[1], u1) * u1
     c0_1 = get_integer(y2_1)
     y2_2 = csl[0] - np.dot(csl[0], u1) * u1
     c0_2 = get_integer(y2_2)
-    # print(c0_1, c0_2)
-    # exit(0)
     if sum(abs(c0_1)) > sum(abs(c0_2)):
         u2 = y2_2 / norm(y2_2)
         y3 = csl[1] - np.dot(csl[1], u1) * u1 - np.dot(csl[1], u2) * u2
@@ -255,13 +220,10 @@ def orthogonalize_csl(csl, axis):
         y3 = csl[0] - np.dot(csl[0], u1) * u1 - np.dot(csl[0], u2) * u2
         csl[1] = c0_1
         csl[0] = get_integer(y3)
-    # print(csl)
-    # exit(0)
     for i in range(3):
         for j in range(i + 1, 3):
             if not np.allclose(np.dot(csl[i], csl[j]), 0):
                 raise ValueError("Non-orthogonal basis: %s" % csl)
-    # print(csl); exit(0)
     return csl.round().astype(int)
 
 
@@ -314,8 +276,6 @@ class GBInformation(dict):
                     data.append(row)
         outs.append(tabulate(data, numalign="center", tablefmt='orgtbl',
                              headers=["Sigma", "Theta", "GB Plane", "CSL"]))
-        # print(outs)
-        # exit(0)
         return "\n".join(outs)
 
     def get_gb_info(self):
@@ -346,28 +306,15 @@ class GBInformation(dict):
         if not sigma_theta:
             raise ValueError("Cannot find any matching GB. Most likely there "
                              "is no sigma %s%s GB." % (self.max_sigma, self.axis))
-        # print(sigma_theta)
-        # exit(0)
         for sigma in sigma_theta:
             sigma_theta[sigma] = sorted(sigma_theta[sigma], key=lambda t: t[0])
             min_theta = sigma_theta[sigma][0][0]
-            # print(min_theta)
-            # exit(0)
             rot_matrix = self.get_rotate_matrix(min_theta)
-            # print(rot_matrix)
-            # exit(0)
             csl_matrix = self.get_csl_matrix(sigma, rot_matrix)
-            # print(csl_matrix)
-            # exit(0)
-            # print(det(csl_matrix))
             csl = orthogonalize_csl(csl_matrix, self.axis)
             # Sometime when getting CSL from O-lattice, det not equals to sigma.
             # That's why it needs to be reduced. E.g. Sigma 115[113]
             csl = reduce_csl(csl)
-            # print(det(csl))
-            # exit(0)
-            # print(csl)
-            # exit(0)
             all_csl = [csl]
             if sorted(self.axis) == [0, 0, 1]:
                 ind = 0
@@ -395,8 +342,6 @@ class GBInformation(dict):
             gb_info[sigma].update({"plane": [[list(j) for j in i.transpose()]
                                              for i in all_csl],
                                    "rot_matrix": rot_matrix, "csl": all_csl})
-        # print(gb_info)
-        # exit(0)
         return gb_info
 
     def get_theta(self, m, n):
@@ -465,19 +410,9 @@ class GBInformation(dict):
             t = np.eye(3) - np.dot(np.dot(np.dot(u, inv(s)), inv(rotate_matrix)), s)
             if abs(det(t)) > 1e-6:
                 break
-        # print(u)
-        # print(det(t) * sigma)
-        # exit(0)
         o_lattice = np.round(inv(t), 12)
         n = np.round(sigma / det(o_lattice), 6)
-        # print(t)
-        # print(det(t))
-        # print(o_lattice)
-        # print(n)
-        # exit(0)
         csl_matrix = o_lattice_to_csl(o_lattice, n)
-        # print(csl_matrix)
-        # exit(0)
         return csl_matrix
 
 
@@ -536,13 +471,6 @@ class GrainBoundary(object):
             initial_struct = Grain.from_sites(new_s[:])
         self._grain_a, self._grain_b = initial_struct.build_grains(
             self.csl, self.gb_direction, uc_a, uc_b)
-
-    # @property
-    # def gb_info(self):
-    #     """
-    #     GB information including sigma, CSL matrix, GB plane and rotation angle
-    #     """
-    #     return GBInformation(self.axis, self.sigma, specific=True)
 
     @property
     def rot_matrix(self):
@@ -623,9 +551,6 @@ class GrainBoundary(object):
                     self.grain_a.delete_bt_layer(v[1], tol, ind)
                 else:
                     self.grain_b.delete_bt_layer(v[1], tol, ind)
-        self.grain_a.to(filename="POSCAR_a")
-        self.grain_b.to(filename="POSCAR_b")
-        # exit(0)
         abc_a = list(self.grain_a.lattice.abc)
         abc_b, angles = self.grain_b.lattice.lengths_and_angles
         if ind == 1:
@@ -635,22 +560,16 @@ class GrainBoundary(object):
         abc_a[ind] += abc_b[ind] + 2 * add_if_dist + vacuum
         new_lat = Lattice.from_lengths_and_angles(abc_a, angles)
         a_fcoords = new_lat.get_fractional_coords(self.grain_a.cart_coords)
-        # print(self.grain_a.cart_coords)
 
         grain_a = Grain(new_lat, self.grain_a.species, a_fcoords)
-        # self.grain_b.to(filename="POSCAR")
-        # exit(0)
         l_vector = [0, 0]
         l_vector.insert(ind, l)
         b_fcoords = new_lat.get_fractional_coords(
             self.grain_b.cart_coords + l_vector)
         grain_b = Grain(new_lat, self.grain_b.species, b_fcoords)
-        # grain_a.to(filename="POSCAR_a")
-        # grain_b.to(filename="POSCAR_b")
 
         gb = Grain.from_sites(grain_a[:] + grain_b[:])
         gb = gb.get_sorted_structure()
-        # gb.merge_sites(tol=0.25, mode="delete")
         if to_primitive:
             gb = gb.get_primitive_structure()
         return gb
