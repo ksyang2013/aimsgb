@@ -1,0 +1,280 @@
+YbZrO3:
+  AO:
+    O: -4.95
+    Yb: 2.63
+  BO:
+    O: -1.87
+    Zr: 6.05
+MgZrO3:
+  AO:
+    Mg: 2.71
+    O: -5.06
+  BO:
+    O: -1.81
+    Zr: 5.96
+BaTiO3:
+  AO:
+    Ba: 2.73
+    O: -5.98
+  BO:
+    O: -2.13
+    Ti: 7.52
+MgSiO3:
+  AO:
+    Mg: 2.43
+    O: -2.97
+  BO:
+    O: -1.72
+    Si: 3.99
+CaSiO3:
+  AO:
+    Ca: 2.61
+    O: -3.1
+  BO:
+    O: -1.82
+    Si: 4.13
+PbSnO3:
+  AO:
+    O: -3.25
+    Pb: 3.91
+  BO:
+    O: -2.49
+    Sn: 4.33
+PbTiO3:
+  AO:
+    O: -6.08
+    Pb: 3.85
+  BO:
+    O: -2.57
+    Ti: 7.37
+SnSnO3:
+  AO:
+    O: -3.1
+    Sn: 4.3
+  BO:
+    O: -2.77
+    Sn: 4.34
+SnSiO3:
+  AO:
+    O: -3.08
+    Sn: 4.35
+  BO:
+    O: -2.93
+    Si: 4.6
+CaGeO3:
+  AO:
+    Ca: 2.59
+    O: -3.58
+  BO:
+    Ge: 4.42
+    O: -1.71
+SrSiO3:
+  AO:
+    O: -3.24
+    Sr: 2.61
+  BO:
+    O: -1.82
+    Si: 4.28
+PbHfO3:
+  AO:
+    O: -4.6
+    Pb: 3.9
+  BO:
+    Hf: 5.66
+    O: -2.48
+CdSiO3:
+  AO:
+    Cd: 2.79
+    O: -3.03
+  BO:
+    O: -1.97
+    Si: 4.18
+EuHfO3:
+  AO:
+    Eu: 2.73
+    O: -4.5
+  BO:
+    Hf: 5.84
+    O: -2.04
+CaTiO3:
+  AO:
+    Ca: 2.57
+    O: -5.92
+  BO:
+    O: -2.02
+    Ti: 7.38
+CaHfO3:
+  AO:
+    Ca: 2.63
+    O: -4.6
+  BO:
+    Hf: 5.63
+    O: -1.83
+SnZrO3:
+  AO:
+    O: -4.98
+    Sn: 4.26
+  BO:
+    O: -2.65
+    Zr: 6.02
+GeGeO3:
+  AO:
+    Ge: 4.43
+    O: -3.34
+  BO:
+    Ge: 4.51
+    O: -2.8
+SrHfO3:
+  AO:
+    O: -4.58
+    Sr: 2.58
+  BO:
+    Hf: 5.71
+    O: -1.85
+SrSnO3:
+  AO:
+    O: -3.32
+    Sr: 2.58
+  BO:
+    O: -1.75
+    Sn: 4.24
+BaHfO3:
+  AO:
+    Ba: 2.74
+    O: -4.56
+  BO:
+    Hf: 5.81
+    O: -2.0
+YbHfO3:
+  AO:
+    O: -4.57
+    Yb: 2.63
+  BO:
+    Hf: 5.65
+    O: -1.85
+GeTiO3:
+  AO:
+    Ge: 4.41
+    O: -6.09
+  BO:
+    O: -2.8
+    Ti: 7.27
+GeSnO3:
+  AO:
+    Ge: 4.51
+    O: -3.11
+  BO:
+    O: -2.75
+    Sn: 4.1
+MnSiO3:
+  AO:
+    Mn: 3.04
+    O: -2.99
+  BO:
+    O: -2.07
+    Si: 4.08
+PbSiO3:
+  AO:
+    O: -3.2
+    Pb: 4.06
+  BO:
+    O: -2.62
+    Si: 4.38
+BaZrO3:
+  AO:
+    Ba: 2.72
+    O: -4.95
+  BO:
+    O: -2.0
+    Zr: 6.23
+BaSnO3:
+  AO:
+    Ba: 2.73
+    O: -3.51
+  BO:
+    O: -1.82
+    Sn: 4.42
+MgTiO3:
+  AO:
+    Mg: 2.55
+    O: -6.03
+  BO:
+    O: -1.96
+    Ti: 7.41
+SnHfO3:
+  AO:
+    O: -4.57
+    Sn: 4.29
+  BO:
+    Hf: 5.63
+    O: -2.68
+MgSnO3:
+  AO:
+    Mg: 2.67
+    O: -3.1
+  BO:
+    O: -1.75
+    Sn: 3.93
+CaZrO3:
+  AO:
+    Ca: 2.63
+    O: -4.98
+  BO:
+    O: -1.84
+    Zr: 6.04
+BaSiO3:
+  AO:
+    Ba: 2.84
+    O: -3.57
+  BO:
+    O: -1.89
+    Si: 4.52
+SrTiO3:
+  AO:
+    O: -5.93
+    Sr: 2.55
+  BO:
+    O: -2.03
+    Ti: 7.44
+CaSnO3:
+  AO:
+    Ca: 2.62
+    O: -3.22
+  BO:
+    O: -1.75
+    Sn: 4.11
+SnTiO3:
+  AO:
+    O: -6.06
+    Sn: 4.26
+  BO:
+    O: -2.73
+    Ti: 7.26
+PbZrO3:
+  AO:
+    O: -5.0
+    Pb: 3.89
+  BO:
+    O: -2.47
+    Zr: 6.06
+GeSiO3:
+  AO:
+    Ge: 4.17
+    O: -2.98
+  BO:
+    O: -2.9
+    Si: 4.61
+EuZrO3:
+  AO:
+    Eu: 2.72
+    O: -4.88
+  BO:
+    O: -2.06
+    Zr: 6.27
+SrZrO3:
+  AO:
+    O: -4.97
+    Sr: 2.57
+  BO:
+    O: -1.87
+    Zr: 6.12

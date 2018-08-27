@@ -1,0 +1,17 @@
+ALGO = Fast
+EDIFF = 1E-5
+EDIFFG = -0.01
+ENCUT = 450
+IBRION = 2
+ISIF = 3
+ISMEAR = 0
+ISPIN = 2
+LCHARG = False
+LMAXMIX = 4
+LREAL = Auto
+LWAVE = False
+MAGMOM = 2*5
+NPAR = 4
+NSW = 400
+PREC = Accurate
+SIGMA = 0.05

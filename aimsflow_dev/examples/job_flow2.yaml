@@ -1,0 +1,106 @@
+RUN_SCRIPT: |
+  #!/bin/csh
+  #PBS -e err.$PBS_JOBID
+  #PBS -A kyang-group
+  #PBS -M {user_name}@ucsd.edu
+  #PBS -o out.$PBS_JOBID
+  #PBS -N {job_name}
+  #PBS -q condo
+  #PBS -m a
+  #PBS -l nodes=1:ppn=24:haswell
+  #PBS -l walltime=1:0:0
+  cd $PBS_O_WORKDIR
+  {command}
+  qsub -W depend=afterany:$PBS_JOBID checkscript.sh
+  mpirun -v -machinefile $PBS_NODEFILE -np $PBS_NP  {exe} > vasp.out.$PBS_JOBID
+CHECK_SCRIPT: |
+  #!/bin/csh
+  #PBS -e err.check.$PBS_JOBID
+  #PBS -A kyang-group
+  #PBS -M {user_name}@ucsd.edu
+  #PBS -o out.check.$PBS_JOBID
+  #PBS -N {job_name}
+  #PBS -q condo
+  #PBS -m a
+  #PBS -l nodes=1:ppn=24:haswell
+  #PBS -l walltime=0:2:0
+  cd $PBS_O_WORKDIR
+  aimsflow vasp -cj {job_type}
+ADD_U: false
+ADD_MAG: true
+RELAX:
+  EXE: mpivasp54s
+  INCAR:
+    ALGO: Fast
+    EDIFF: 1E-5
+    EDIFFG: -0.01
+    ENCUT: 450
+    IBRION: 2
+    ISIF: 3
+    ISMEAR: 0
+    ISPIN: 2
+    LCHARG: false
+    LMAXMIX: 4
+    LREAL: Auto
+    LWAVE: false
+    NPAR: 4
+    NSW: 400
+    PREC: Accurate
+    SIGMA: 0.05
+  KPT: 64
+  SUFFIX: null
+STATIC:
+  EXE: mpivasp54sLS
+  INCAR:
+    ALGO: Normal
+    EDIFF: 1.0e-06
+    EMAX: 25
+    EMIN: -25
+    ENCUT: 450
+    IBRION: -1
+    ICHARG: 2
+    ISMEAR: -5
+    ISPIN: 1
+    LCHARG: true
+    LMAXMIX: 4
+    LNONCOLLINEAR: true
+    LORBIT: 11
+    LORBMOM: true
+    LREAL: Auto
+    LSORBIT: true
+    LWAVE: false
+    NEDOS: 5000
+    NELM: 200
+    NPAR: 4
+    NSW: 0
+    PREC: Accurate
+    SIGMA: 0.05
+  KPT: 400
+  SOC: 0.0
+  SUFFIX: null
+  EXTRA:
+  - SOC: 90
+    SUFFIX: 90
+  - SOC: 45
+    SUFFIX: 45
+  - SOC: 45
+    SUFFIX: 45-2
+    INCAR:
+      ENCUT: 500
+  - SOC: 45
+    SUFFIX: 45-3
+    INCAR:
+      ENCUT: 500
+    KPT: 500
+POSCAR:
+  Fe: |
+    Fe2
+    1.0
+    2.848116 0.000000 0.000000
+    0.000000 2.848116 0.000000
+    0.000000 0.000000 2.848116
+    Fe
+    2
+    direct(2)
+    0.000000 0.000000 0.000000 Fe
+    0.500000 0.500000 0.500000 Fe
