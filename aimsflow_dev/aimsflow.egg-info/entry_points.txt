@@ -1,3 +1,0 @@
-[console_scripts]
-aimsflow = aimsflow.cli.af:main
-
