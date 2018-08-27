@@ -1,2 +1,0 @@
-include *.rst requirements*.txt
-recursive-include aimsflow *.py *.json *.yaml
