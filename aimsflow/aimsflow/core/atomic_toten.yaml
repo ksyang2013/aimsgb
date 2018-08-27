@@ -1,0 +1,332 @@
+H:
+  gga: -1.10100487
+  gga_u: -1.10100487
+  psp: PAW_PBE.H.15Jun2001
+He:
+  gga: -0.01146171
+  gga_u: -0.01146171
+  psp: PAW_PBE.He.05Jan2001
+Li:
+  gga: -1.9035962
+  gga_u: -1.9035962
+  psp: PAW_PBE.Li_sv.23Jan2001
+Be:
+  gga: -3.73904689
+  gga_u: -3.73904689
+  psp: PAW_PBE.Be_sv.06Sep2000
+B:
+  gga: -6.69327302
+  gga_u: -6.69327302
+  psp: PAW_PBE.B_h.07Sep2000
+C:
+  gga: -9.22258919
+  gga_u: -9.22258919
+  psp: PAW_PBE.C.08Apr2002
+N:
+  gga: -8.32607417
+  gga_u: -8.32607417
+  psp: PAW_PBE.N.08Apr2002
+O:
+  gga: -4.945817618
+  gga_u: -4.945817618
+  psp: PAW_PBE.O.08Apr2002
+F:
+  gga: -1.87873169
+  gga_u: -1.87873169
+  psp: PAW_PBE.F.08Apr2002
+Ne:
+  gga: -0.02993378
+  gga_u: -0.02993378
+  psp: PAW_PBE.Ne.05Jan2001
+Na:
+  gga: -1.31284334
+  gga_u: -1.31284334
+  psp: PAW_PBE.Na_sv.28Sep2000
+Mg:
+  gga: -1.59394215
+  gga_u: -1.59394215
+  psp: PAW_PBE.Mg_pv.06Sep2000
+Al:
+  gga: -3.74362355
+  gga_u: -3.74362355
+  psp: PAW_PBE.Al.04Jan2001
+Si:
+  gga: -5.42372797
+  gga_u: -5.42372797
+  psp: PAW_PBE.Si.05Jan2001
+P:
+  gga: -5.27200883
+  gga_u: -5.27200883
+  psp: PAW_PBE.P.17Jan2003
+S:
+  gga: -4.11270466
+  gga_u: -4.11270466
+  psp: PAW_PBE.S.17Jan2003
+Cl:
+  gga: -1.83902182
+  gga_u: -1.83894877
+  psp: PAW_PBE.Cl.17Jan2003
+Ar:
+  gga: -0.07080972
+  gga_u: -0.07080972
+  psp: PAW_PBE.Ar.07Sep2000
+K:
+  gga: -1.09618341
+  gga_u: -1.09618341
+  psp: PAW_PBE.K_sv.06Sep2000
+Ca:
+  gga: -2.00152431
+  gga_u: -2.00152431
+  psp: PAW_PBE.Ca_sv.06Sep2000
+Sc:
+  gga: -6.33219365
+  gga_u: -5.17108485
+  psp: PAW_PBE.Sc_sv.07Sep2000
+Ti:
+  gga: -7.93826647
+  gga_u: -4.80993813
+  psp: PAW_PBE.Ti_sv.07Sep2000
+V:
+  gga: -9.1148921
+  gga_u: -6.33430132
+  psp: PAW_PBE.V_sv.07Sep2000
+Cr:
+  gga: -9.62922081
+  gga_u: -6.38162805
+  psp: PAW_PBE.Cr_pv.07Sep2000
+Mn:
+  gga: -9.10534448
+  gga_u: -4.27911983
+  psp: PAW_PBE.Mn_pv.07Sep2000
+Fe:
+  gga: -8.45465746
+  gga_u: -4.99056045
+  psp: PAW_PBE.Fe_pv.06Sep2000
+Co:
+  gga: -7.10886096
+  gga_u: -3.08236553
+  psp: PAW_PBE.Co.06Sep2000
+Ni:
+  gga: -5.77778326
+  gga_u: -2.0443785
+  psp: PAW_PBE.Ni_pv.06Sep2000
+Cu:
+  gga: -4.09688272
+  gga_u: -2.20982325
+  psp: PAW_PBE.Cu_pv.06Sep2000
+Zn:
+  gga: -1.26555947
+  gga_u: -0.45748093
+  psp: PAW_PBE.Zn.06Sep2000
+Ga:
+  gga: -2.9112792
+  gga_u: -2.78776397
+  psp: PAW_PBE.Ga.08Apr2002
+Ge:
+  gga: -4.50399518
+  gga_u: -4.50399518
+  psp: PAW_PBE.Ge_h.09Apr2002
+As:
+  gga: -4.65203012
+  gga_u: -4.65203012
+  psp: PAW_PBE.As.06Sep2000
+Se:
+  gga: -3.4828306
+  gga_u: -3.4828306
+  psp: PAW_PBE.Se.06Sep2000
+Br:
+  gga: -1.62900601
+  gga_u: -1.62900601
+  psp: PAW_PBE.Br.06Sep2000
+Kr:
+  gga: -0.0547894
+  gga_u: -0.0547894
+  psp: PAW_PBE.Kr.07Sep2000
+Rb:
+  gga: -0.96236051
+  gga_u: -0.96236051
+  psp: PAW_PBE.Rb_sv.06Sep2000
+Sr:
+  gga: -1.68341796
+  gga_u: -1.68341796
+  psp: PAW_PBE.Sr_sv.07Sep2000
+Y:
+  gga: -6.46289434
+  gga_u: -6.46289434
+  psp: PAW_PBE.Y_sv.06Sep2000
+Zr:
+  gga: -8.54328522
+  gga_u: -8.54328522
+  psp: PAW_PBE.Zr_sv.07Sep2000
+Nb:
+  gga: -10.22445692
+  gga_u: -8.42015737
+  psp: PAW_PBE.Nb_sv.17Jan2003
+Mo:
+  gga: -10.84317865
+  gga_u: -8.05694473
+  psp: PAW_PBE.Mo_pv.08Apr2002
+Tc:
+  gga: -10.35916093
+  gga_u: -6.99172609
+  psp: PAW_PBE.Tc_pv.06Sep2000
+Ru:
+  gga: -9.27186069
+  gga_u: -5.65834299
+  psp: PAW_PBE.Ru_pv.06Sep2000
+Rh:
+  gga: -7.34043652
+  gga_u: -3.82380617
+  psp: PAW_PBE.Rh_pv.06Sep2000
+Pd:
+  gga: -5.38449913
+  gga_u: -2.62896247
+  psp: PAW_PBE.Pd_pv.06Sep2000
+Ag:
+  gga: -2.82744554
+  gga_u: -0.42199417
+  psp: PAW_PBE.Ag.06Sep2000
+Cd:
+  gga: -0.90607121
+  gga_u: -0.43123168
+  psp: PAW_PBE.Cd.06Sep2000
+In:
+  gga: -2.72080248
+  gga_u: -2.58613509
+  psp: PAW_PBE.In_d.06Sep2000
+Sn:
+  gga: -3.79513761
+  gga_u: -3.6592063
+  psp: PAW_PBE.Sn.08Apr2002
+Sb:
+  gga: -4.11683273
+  gga_u: -4.11683273
+  psp: PAW_PBE.Sb.06Sep2000
+Te:
+  gga: -3.1413696
+  gga_u: -3.1413696
+  psp: PAW_PBE.Te.08Apr2002
+I:
+  gga: -1.51787847
+  gga_u: -1.51787847
+  psp: PAW_PBE.I.08Apr2002
+Xe:
+  gga: -0.03358571
+  gga_u: -0.03358571
+  psp: PAW_PBE.Xe.07Sep2000
+Cs:
+  gga: -0.85181303
+  gga_u: -0.85181303
+  psp: PAW_PBE.Cs_sv.08Apr2002
+Ba:
+  gga: -1.92378056
+  gga_u: -1.92378056
+  psp: PAW_PBE.Ba_sv.06Sep2000
+La:
+  gga: -4.92319095
+  gga_u: -4.77816349
+  psp: PAW_PBE.La.06Sep2000
+Ce:
+  gga: -4.77140438
+  gga_u: -4.77140438
+  psp: PAW_PBE.Ce_3.06Sep2000
+Pr:
+  gga: -4.77572375
+  gga_u: -4.77572375
+  psp: PAW_PBE.Pr_3.07Sep2000
+Nd:
+  gga: -4.76387601
+  gga_u: -4.76387584
+  psp: PAW_PBE.Nd_3.06Sep2000
+Pm:
+  gga: -9.15262334
+  gga_u: 0.0
+  psp: PAW_PBE.Pm.08Apr2002
+Sm:
+  gga: -4.7121621
+  gga_u: -4.71216209
+  psp: PAW_PBE.Sm_3.07Sep2000
+Eu:
+  gga: -10.23772167
+  gga_u: -9.84492352
+  psp: PAW_PBE.Eu.08Apr2002
+Gd:
+  gga: -14.07462429
+  gga_u: -13.92409491
+  psp: PAW_PBE.Gd.08Apr2002
+Tb:
+  gga: -4.61200958
+  gga_u: -4.61200958
+  psp: PAW_PBE.Tb_3.06Sep2000
+Dy:
+  gga: -4.58785088
+  gga_u: -4.58785085
+  psp: PAW_PBE.Dy_3.06Sep2000
+Ho:
+  gga: -4.56823065
+  gga_u: -4.56823065
+  psp: PAW_PBE.Ho_3.06Sep2000
+Er:
+  gga: -4.55804579
+  gga_u: -4.55804579
+  psp: PAW_PBE.Er_3.06Sep2000
+Tm:
+  gga: -4.471056
+  gga_u: -4.47105851
+  psp: PAW_PBE.Tm_3.20Jan2003
+Yb:
+  gga: -1.66591531
+  gga_u: -1.14019857
+  psp: PAW_PBE.Yb.24Feb2003
+Lu:
+  gga: -4.51912415
+  gga_u: -4.51912335
+  psp: PAW_PBE.Lu_3.06Sep2000
+Hf:
+  gga: -9.95273654
+  gga_u: -9.95273654
+  psp: PAW_PBE.Hf_pv.06Sep2000
+Ta:
+  gga: -11.84910562
+  gga_u: -10.07599064
+  psp: PAW_PBE.Ta_pv.07Sep2000
+W:
+  gga: -12.95334128
+  gga_u: -10.56585185
+  psp: PAW_PBE.W_pv.06Sep2000
+Re:
+  gga: -12.43239876
+  gga_u: -9.47539694
+  psp: PAW_PBE.Re_pv.06Sep2000
+Os:
+  gga: -11.21885736
+  gga_u: -8.02478302
+  psp: PAW_PBE.Os_pv.20Jan2003
+Ir:
+  gga: -8.85700872
+  gga_u: -5.97335754
+  psp: PAW_PBE.Ir.06Sep2000
+Pt:
+  gga: -6.05450361
+  gga_u: -3.56456622
+  psp: PAW_PBE.Pt.05Jan2001
+Au:
+  gga: -3.27178002
+  gga_u: -1.33349767
+  psp: PAW_PBE.Au.06Sep2000
+Hg:
+  gga: -0.2789603
+  gga_u: -0.2789603
+  psp: PAW_PBE.Hg.06Sep2000
+Tl:
+  gga: -2.36214394
+  gga_u: -2.36214394
+  psp: PAW_PBE.Tl_d.06Sep2000
+Pb:
+  gga: -3.70447028
+  gga_u: -3.70447028
+  psp: PAW_PBE.Pb_d.06Sep2000
+Bi:
+  gga: -3.83180532
+  gga_u: -3.83180612
+  psp: PAW_PBE.Bi.08Apr2002
