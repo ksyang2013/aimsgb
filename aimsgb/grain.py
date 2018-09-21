@@ -134,12 +134,11 @@ class Grain(Structure):
         # check if the 1st layer and last layer are actually the same layer
         # use the fractional as cartesian doesn't work for unorthonormal
         if self.lattice.abc[axis] * abs(
-                                layers[0][0].frac_coords[axis] + 1 -
-                                layers[-1][0].frac_coords[axis]) < tol:
-            tmp = layers[0] + layers[-1]
+                                new_layers[0][0].frac_coords[axis] + 1 -
+                                new_layers[-1][0].frac_coords[axis]) < tol:
+            tmp = new_layers[0] + new_layers[-1]
             new_layers = new_layers[1:-1]
             new_layers.append(sorted(tmp))
-
         return new_layers
 
     def build_grains(self, csl, gb_direction, uc_a=1, uc_b=1):

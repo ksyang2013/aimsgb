@@ -549,6 +549,8 @@ class GrainBoundary(object):
             for j in range(int(v[0])):
                 if i <= 1:
                     self.grain_a.delete_bt_layer(v[1], tol, ind)
+                    # self.grain_a.to(filename='POSCAR')
+                    # exit(0)
                 else:
                     self.grain_b.delete_bt_layer(v[1], tol, ind)
         abc_a = list(self.grain_a.lattice.abc)
