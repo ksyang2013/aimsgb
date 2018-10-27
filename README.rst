@@ -31,10 +31,16 @@ Install aimsgb
     pip install -e .
 
 
-Cite
-====
+How to cite aimsgb
+==================
 
-If you use aimsgb for your work, please cite the paper:
+If you use aimsgb in your research, please consider citing the following work:
+
+    Jianli Cheng, Jian Luo, Kesong Yang. *Aimsgb: An algorithm and open-source python
+    library to generate periodic grain boundary structures.* Computational Materials
+    Science, 2018, 155, 92-103. `doi:10.1016/j.commatsci.2018.08.029
+    <https://doi.org/10.1016/j.commatsci.2018.08.029>`_
+
 
 Copyright
 =========
