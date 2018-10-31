@@ -166,13 +166,16 @@ class Grain(Structure):
                           "We suggest user to build a very big supercell in "
                           "order to minimize this effect.")
 
-        grain_b = self.get_b_from_a(grain_a, csl)
+        temp_a = grain_a.copy()
+        scale_vector = [1, 1]
+        scale_vector.insert(gb_direction, uc_b)
+        temp_a.make_supercell(scale_vector)
+        grain_b = self.get_b_from_a(temp_a, csl)
+        # make sure that all fractional coordinates that equal to 1 will become 0
+        grain_b.make_supercell([1, 1, 1])
 
         scale_vector = [1, 1]
         scale_vector.insert(gb_direction, uc_a)
         grain_a.make_supercell(scale_vector)
-        scale_vector = [1, 1]
-        scale_vector.insert(gb_direction, uc_b)
-        grain_b.make_supercell(scale_vector)
 
         return grain_a, grain_b
