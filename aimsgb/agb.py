@@ -19,7 +19,7 @@ aimsgb_descript = """***********************************************************
 Aimsgb is one open-source python library to generate periodic grain boundary structures.    
 A reference for the usage of aimsgb software is:
 Jianli Cheng, Jian Luo, and Kesong Yang, Aimsgb: An Algorithm and Open-Source Python Library  
-to Generate Periodic Grain Boundary Structures, Comput. Mater. Sci. (in press)         
+to Generate Periodic Grain Boundary Structures, Comput. Mater. Sci. 155, 92-103, (2018). 
 **************************************************************************************************
 
 Aimsgb Command Line Tools 
