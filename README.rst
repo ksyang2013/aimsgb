@@ -9,9 +9,8 @@ aimsgb is expected to greatly accelerate the theoretical investigation of
 grain boundary properties and facilitate the experimental analysis of grain
 boundary structures as well.
 
-A reference for the usage of aimsGB software is:
-Jianli Cheng, Jian Luo, and Kesong Yang, Aimsgb: An Algorithm and OPen-Source Python Library to Generate Periodic Grain Boundary Structures, Comput. Mater. Sci. 155, 92-103, (2018). 
-DOI:10.1016/j.commatsci.2018.08.029  
+We also provide a web-based GUI to access aimsgb framework: `aimsgb.org
+<http://aimsgb.org/>`_
 
 Install aimsgb
 ==============
