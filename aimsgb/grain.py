@@ -1,5 +1,4 @@
 import warnings
-warnings.filterwarnings("ignore")
 import numpy as np
 from functools import reduce
 from itertools import groupby
@@ -62,8 +61,8 @@ class Grain(Structure):
                                 properties=site.properties)
         self._sites = s.sites
         self._lattice = s.lattice
-        new_lat = Lattice.from_lengths_and_angles(*s.lattice.lengths_and_angles)
-        self.modify_lattice(new_lat)
+        new_lat = Lattice.from_parameters(*s.lattice.parameters)
+        self.lattice = new_lat
 
     def delete_bt_layer(self, bt, tol=0.25, axis=2):
         """
@@ -141,6 +140,11 @@ class Grain(Structure):
             new_layers.append(sorted(tmp))
         return new_layers
 
+    def get_orthogonal_grain(self):
+        a, b, c = self.lattice.abc
+        new_latt = Lattice.orthorhombic(a, b, c)
+        return Structure(new_latt, self.species, self.frac_coords)
+
     def build_grains(self, csl, gb_direction, uc_a=1, uc_b=1):
         """
         Build structures for grain A and B from CSL matrix, number of unit cell
@@ -160,11 +164,14 @@ class Grain(Structure):
         # rotate along a longer axis between a and b
         grain_a = self.copy()
         grain_a.make_supercell(csl_t)
+
         if not all([i == 90 for i in grain_a.lattice.angles]):
-            warnings.warn("The lattice system of the grain is not orthogonal. "
-                          "The periodicity of the grain is most likely broken. "
-                          "We suggest user to build a very big supercell in "
-                          "order to minimize this effect.")
+            # warnings.warn("The lattice system of the grain is not orthogonal. "
+            #               "The periodicity of the grain is most likely broken. "
+            #               "We suggest user to build a very big supercell in "
+            #               "order to minimize this effect.")
+            grain_a = grain_a.get_orthogonal_grain()
+            # grain_b = grain_b.get_orthogonal_grain()
 
         temp_a = grain_a.copy()
         scale_vector = [1, 1]
@@ -178,4 +185,6 @@ class Grain(Structure):
         scale_vector.insert(gb_direction, uc_a)
         grain_a.make_supercell(scale_vector)
 
+        # grain_b.to(filename='POSCAR')
+        # exit(0)
         return grain_a, grain_b

@@ -552,13 +552,13 @@ class GrainBoundary(object):
                 else:
                     self.grain_b.delete_bt_layer(v[1], tol, ind)
         abc_a = list(self.grain_a.lattice.abc)
-        abc_b, angles = self.grain_b.lattice.lengths_and_angles
+        abc_b, angles = np.reshape(self.grain_b.lattice.parameters, (2, 3))
         if ind == 1:
             l = (abc_a[ind] + add_if_dist) * sin(radians(angles[2]))
         else:
             l = abc_a[ind] + add_if_dist
         abc_a[ind] += abc_b[ind] + 2 * add_if_dist + vacuum
-        new_lat = Lattice.from_lengths_and_angles(abc_a, angles)
+        new_lat = Lattice.from_parameters(*abc_a, *angles)
         a_fcoords = new_lat.get_fractional_coords(self.grain_a.cart_coords)
 
         grain_a = Grain(new_lat, self.grain_a.species, a_fcoords)
