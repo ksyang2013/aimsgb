@@ -2,7 +2,7 @@ import warnings
 import numpy as np
 from functools import reduce
 from itertools import groupby
-from pymatgen import Structure, Lattice, PeriodicSite
+from pymatgen.core.structure import Structure, Lattice, PeriodicSite
 
 __author__ = "Jianli CHENG and Kesong YANG"
 __copyright__ = "Copyright 2018 University of California San Diego"
