@@ -9,7 +9,7 @@ from math import sqrt, atan, degrees, pi
 import numpy as np
 from numpy import sin, cos, ceil, radians, inner, identity
 from numpy.linalg import inv, det, norm, solve
-from pymatgen import Lattice
+from pymatgen.core.lattice import Lattice
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 from aimsgb import Grain
