@@ -140,10 +140,9 @@ class Grain(Structure):
             new_layers.append(sorted(tmp))
         return new_layers
 
-    def get_orthogonal_grain(self):
+    def set_orthogonal_grain(self):
         a, b, c = self.lattice.abc
-        new_latt = Lattice.orthorhombic(a, b, c)
-        return Structure(new_latt, self.species, self.frac_coords)
+        self.lattice = Lattice.orthorhombic(a, b, c)
 
     def build_grains(self, csl, gb_direction, uc_a=1, uc_b=1):
         """
@@ -170,8 +169,8 @@ class Grain(Structure):
             #               "The periodicity of the grain is most likely broken. "
             #               "We suggest user to build a very big supercell in "
             #               "order to minimize this effect.")
-            grain_a = grain_a.get_orthogonal_grain()
-            # grain_b = grain_b.get_orthogonal_grain()
+            grain_a.set_orthogonal_grain()
+            # grain_b = grain_b.set_orthogonal_grain()
 
         temp_a = grain_a.copy()
         scale_vector = [1, 1]
