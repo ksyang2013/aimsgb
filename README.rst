@@ -16,7 +16,7 @@ Install aimsgb
 ==============
 1. Clone the latest version from github::
 
-    git clone git@github.com:ksyang2013/aimsgb.git
+    git clone https://github.com/ksyang2013/aimsgb.git
 
 2. Navigate to aimsgb folder::
 
