@@ -10,7 +10,6 @@ Python source code - replace this with a description of the code and write the c
 """
 
 import sys
-from xio import *
 
 import time
 from aimsgb import GrainBoundary, Grain, GBInformation
