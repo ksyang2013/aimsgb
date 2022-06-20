@@ -80,13 +80,13 @@ http://materials.ucsd.edu/
 setup(
     name="aimsgb",
     packages=find_packages(),
-    version="0.1.0",
+    version="0.1.1",
     setup_requires=["setuptools>=18.0"],
     install_requires=["pymatgen"],
     include_package_data=True,
     author="Jianli Cheng and Kesong YANG",
     maintainer="Jianli Cheng, Sicong JIANG, and Kesong YANG",
-    maintainer_email="jic198@ucsd.edu; sij014@ucsd.edu; kesong@ucsd.edu",
+    maintainer_email="jic198@ucsd.edu, sij014@ucsd.edu, kesong@ucsd.edu",
     url="http://aimsgb.org",
     description="aimsgb is a python library for generatng the atomic "
                 "coordinates of periodic grain boundaries."
