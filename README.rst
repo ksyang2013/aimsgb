@@ -14,6 +14,14 @@ We also provide a web-based GUI to access aimsgb framework: `aimsgb.org
 
 Install aimsgb
 ==============
+Method 1: Use Pip
+-----------------
+The easiest way to install aimsgb is to simply run a one-liner in pip::
+
+   pip install aimsgb
+
+Method 2: Use Git to install
+----------------------------
 1. Clone the latest version from github::
 
     git clone https://github.com/ksyang2013/aimsgb.git
