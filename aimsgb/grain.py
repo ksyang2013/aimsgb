@@ -3,6 +3,7 @@ import numpy as np
 from functools import reduce
 from itertools import groupby
 from pymatgen.core.structure import Structure, Lattice, PeriodicSite
+from pymatgen.analysis.defects.supercells import get_sc_fromstruct
 
 __author__ = "Jianli CHENG and Kesong YANG"
 __copyright__ = "Copyright 2018 University of California San Diego"
@@ -169,7 +170,8 @@ class Grain(Structure):
             #               "The periodicity of the grain is most likely broken. "
             #               "We suggest user to build a very big supercell in "
             #               "order to minimize this effect.")
-            grain_a.set_orthogonal_grain()
+            grain_a.make_supercell(get_sc_fromstruct(grain_a).transpose())
+            # grain_a.set_orthogonal_grain()
             # grain_b = grain_b.set_orthogonal_grain()
 
         temp_a = grain_a.copy()
