@@ -461,20 +461,9 @@ class GrainBoundary(object):
         for i, v in enumerate(self.csl.transpose()):
             if self.plane == list(v):
                 self.gb_direction = i
-        # abc = initial_struct.lattice.abc
-        # if abc[0] != abc[1] or \
-        #         any([i != 90 for i in initial_struct.lattice.angles]):
-        #     warnings.warn("Your input structure is not an orthogonal structure. "
-        #                   "aimsgb will do the transformation for you. This may "
-        #                   "take a while.")
-        #     # cst = CubicSupercellTransformation(force_90_degrees=True)
-        #     # _s = initial_struct.copy()
-        #     # _s = cst.apply_transformation(_s)
-        #     # matrix = [reduce_vector(i) for i in cst.transformation_matrix]
-        #     # initial_struct.make_supercell(matrix)
-        #     sg = SpacegroupAnalyzer(initial_struct)
-        #     new_s = sg.get_conventional_standard_structure()
-        #     initial_struct = Grain.from_sites(new_s[:])
+        sg = SpacegroupAnalyzer(initial_struct)
+        new_s = sg.get_conventional_standard_structure()
+        initial_struct = Grain.from_sites(new_s[:])
         self._grain_a, self._grain_b = initial_struct.build_grains(
             self.csl, self.gb_direction, uc_a, uc_b)
 
