@@ -5,6 +5,7 @@ from itertools import groupby
 from aimsgb.utils import reduce_vector
 from pymatgen.core.structure import Structure, Lattice, PeriodicSite
 from pymatgen.transformations.advanced_transformations import CubicSupercellTransformation
+from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.analysis.defects.supercells import get_sc_fromstruct, _ase_cubic
 
 __author__ = "Jianli CHENG and Kesong YANG"
@@ -179,7 +180,13 @@ class Grain(Structure):
                                                min_length=min(grain_a.lattice.abc))
             _s = grain_a.copy()
             _s = cst.apply_transformation(_s)
-            matrix = [reduce_vector(i) for i in cst.transformation_matrix]
+            _matrix = [reduce_vector(i) for i in cst.transformation_matrix]
+            _s = grain_a.copy()
+            _s.make_supercell(_matrix)
+            sm = StructureMatcher(attempt_supercell=True, primitive_cell=False)
+            _matrix = sm.get_supercell_matrix(_s, self)
+            matrix = [reduce_vector(i) for i in _matrix]
+            grain_a = self.copy()
             grain_a.make_supercell(matrix)
             # grain_a.make_supercell(get_sc_fromstruct(grain_a, min_length=min(grain_a.lattice.abc),
             #                                          force_diagonal=True))
