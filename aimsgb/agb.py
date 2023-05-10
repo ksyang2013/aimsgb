@@ -4,6 +4,7 @@ from __future__ import division
 import sys
 import argparse
 import numpy as np
+from mp_api.client import MPRester, MPRestError
 
 from aimsgb import Grain, GBInformation, GrainBoundary
 
@@ -35,7 +36,19 @@ def gb_list(args):
 def gb(args):
     axis = list(map(int, args.axis))
     plane = args.plane
-    initial_struct = Grain.from_file(args.poscar)
+    initial_struct = None
+    if args.filename:
+        initial_struct = Grain.from_file(args.filename)
+    elif args.mpid:
+        mpr = MPRester()
+        try:
+            s = mpr.get_structure_by_material_id(args.mpid)
+            initial_struct = Grain.from_dict(s.as_dict())
+        except MPRestError:
+            raise MPRestError("Please run 'export MP_API_KEY=YOUR_MAPI_KEY' to setup your api_key first.")
+    if initial_struct is None:
+        raise ValueError("Please provide either filename or mpid.")
+    
     gb = GrainBoundary(axis, args.sigma, plane, initial_struct, args.uc_a, args.uc_b)
     to_primitive = False if args.conventional else True
     gb.build_gb(args.vacuum, args.add_if_dist, to_primitive, args.delete_layer,
@@ -67,9 +80,9 @@ def main():
         "gb", help="Build grain boundary based on rotation axis, sigma, GB plane, "
                    "and input structure file.\nThe user can also specify many "
                    "optional arguments, such grain size and interface terminations."
-                   "\nEXAMPLE1: aimsgb gb 001 5 1 2 0 POSCAR"
-                   "\nEXAMPLE2: aimsgb gb 001 5 1 2 0 POSCAR -ua 2 -ub 3"
-                   "\nEXAMPLE3: aimsgb gb 001 5 1 2 0 POSCAR -ua 3 -ub 2 -dl 0b1t1b0t",
+                   "\nEXAMPLE1: aimsgb gb 001 5 1 2 0 -f POSCAR"
+                   "\nEXAMPLE2: aimsgb gb 001 5 1 2 0 -mp mp-13 -ua 2 -ub 3"
+                   "\nEXAMPLE3: aimsgb gb 001 5 1 2 0 -f POSCAR -ua 3 -ub 2 -dl 0b1t1b0t",
         formatter_class=argparse.RawTextHelpFormatter)
     parser_gb.add_argument("axis", metavar="rotation axis", type=str,
                            help="The rotation axis of GB, EXAMPLE: 110")
@@ -77,40 +90,42 @@ def main():
                            help="The sigma value for grain boundary, EXAMPLE: 3")
     parser_gb.add_argument("plane", type=int, nargs=3,
                            help="The GB plane for grain boundary, EXAMPLE: 1 1 0")
-    parser_gb.add_argument("poscar", type=str,
+    parser_gb.add_argument("-f", "--filename", type=str,
                            help="The initial structure file for grain boundary.")
-    parser_gb.add_argument("out", type=str, default="POSCAR", nargs="?",
+    parser_gb.add_argument("-mp", "--mpid", type=str,
+                           help="The mpid to get initial structure from Materials Project.")
+    parser_gb.add_argument("-o", "--out", type=str, default="POSCAR", 
                            help="The output filename. (default: %(default)s)")
     parser_gb.add_argument("-ua", "--uc_a", default=1, type=int,
                            help="The size (uc) for grain A. (default: %(default)s)"
-                                "\nEXAMPLE: aimsgb gb 001 5 1 2 0 POSCAR -ua 2")
+                                "\nEXAMPLE: aimsgb gb 001 5 1 2 0 -f POSCAR -ua 2")
     parser_gb.add_argument("-ub", "--uc_b", default=1, type=int,
                            help="The size (uc) for grain B. (default: %(default)s)"
-                                "\nEXAMPLE: aimsgb gb 001 5 1 2 0 POSCAR -ub 2")
+                                "\nEXAMPLE: aimsgb gb 001 5 1 2 0 -f POSCAR -ub 2")
     parser_gb.add_argument("-dl", "--delete_layer", default="0b0t0b0t", type=str,
                            help="Delete bottom or top layers for each grain. "
                                 "(default: %(default)s)"
-                                "\nEXAMPLE: aimsgb gb 001 5 1 2 0 POSCAR -dl 0b1t1b0t")
+                                "\nEXAMPLE: aimsgb gb 001 5 1 2 0 -f POSCAR -dl 0b1t1b0t")
     parser_gb.add_argument("-v", "--vacuum", default=0.0, type=float,
                            help="Set vacuum thickness for grain boundary. "
                                 "(default: %(default)s angstrom)"
-                                "\nEXAMPLE: aimsgb gb 001 5 1 2 0 POSCAR -v 20")
+                                "\nEXAMPLE: aimsgb gb 001 5 1 2 0 -f POSCAR -v 20")
     parser_gb.add_argument("-t", "--tol", default=0.25, type=float,
                            help="Tolerance factor to determine if two "
                                 "atoms are at the same plane. "
                                 "(default: %(default)s angstrom)"
-                                "\nEXAMPLE: aimsgb gb 001 5 1 2 0 POSCAR -dl 0b1t1b0t -t 0.5")
+                                "\nEXAMPLE: aimsgb gb 001 5 1 2 0 -f POSCAR -dl 0b1t1b0t -t 0.5")
     parser_gb.add_argument("-ad", "--add_if_dist", default=0.0, type=float,
                            help="Add extra distance between two grains. "
                                 "(default: %(default)s angstrom)"
-                                "\nEXAMPLE: aimsgb gb 001 5 1 2 0 POSCAR -ad 0.5")
+                                "\nEXAMPLE: aimsgb gb 001 5 1 2 0 -f POSCAR -ad 0.5")
     parser_gb.add_argument("-c", "--conventional", action="store_true",
                            help="Get conventional GB, not primitive"
-                                "\nEXAMPLE: aimsgb gb 001 5 1 2 0 POSCAR -c")
+                                "\nEXAMPLE: aimsgb gb 001 5 1 2 0 -f POSCAR -c")
     parser_gb.add_argument("-fmt", "--fmt", default="poscar", const="poscar",
                            nargs="?", choices=["poscar", "cif", "cssr", "json"],
                            help="Choose the output format. (default: %(default)s)"
-                                "\nEXAMPLE: aimsgb gb 001 5 1 2 0 POSCAR -fmt cif")
+                                "\nEXAMPLE: aimsgb gb 001 5 1 2 0 -f POSCAR -fmt cif")
     parser_gb.set_defaults(func=gb)
 
     args = parser.parse_args()

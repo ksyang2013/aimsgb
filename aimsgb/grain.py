@@ -2,8 +2,11 @@ import warnings
 import numpy as np
 from functools import reduce
 from itertools import groupby
+from aimsgb.utils import reduce_vector
 from pymatgen.core.structure import Structure, Lattice, PeriodicSite
-from pymatgen.analysis.defects.supercells import get_sc_fromstruct
+from pymatgen.transformations.advanced_transformations import CubicSupercellTransformation
+from pymatgen.analysis.structure_matcher import StructureMatcher
+from pymatgen.analysis.defects.supercells import get_sc_fromstruct, _ase_cubic
 
 __author__ = "Jianli CHENG and Kesong YANG"
 __copyright__ = "Copyright 2018 University of California San Diego"
@@ -38,6 +41,8 @@ class Grain(Structure):
         else:
             axis = (0, 1, 0)
         anchor = grain_b.lattice.get_cartesian_coords(np.array([.0, .0, .0]))
+        # print(axis, anchor)
+        # exit()
         grain_b.rotate_sites(theta=np.radians(180), axis=axis, anchor=anchor)
         return grain_b
 
@@ -46,7 +51,7 @@ class Grain(Structure):
         Create a supercell. Very similar to pymatgen's Structure.make_supercell
         However, we need to make sure that all fractional coordinates that equal
         to 1 will become 0 and the lattice are redefined so that x_c = [0, 0, c]
-
+    
         Args:
             scaling_matrix (3x3 matrix): The scaling matrix to make supercell.
         """
@@ -164,16 +169,33 @@ class Grain(Structure):
         # rotate along a longer axis between a and b
         grain_a = self.copy()
         grain_a.make_supercell(csl_t)
+        # grain_a.to(filename='POSCAR')
+        # exit()
 
         if not all([i == 90 for i in grain_a.lattice.angles]):
-            # warnings.warn("The lattice system of the grain is not orthogonal. "
-            #               "The periodicity of the grain is most likely broken. "
-            #               "We suggest user to build a very big supercell in "
-            #               "order to minimize this effect.")
-            grain_a.make_supercell(get_sc_fromstruct(grain_a).transpose())
+            warnings.warn("The lattice system of the grain is not orthogonal. "
+                          "aimsgb will find a supercell of the grain structure "
+                          "that is orthogonalized. This may take a while. ")
+            cst = CubicSupercellTransformation(force_90_degrees=True,
+                                               min_length=min(grain_a.lattice.abc))
+            _s = grain_a.copy()
+            _s = cst.apply_transformation(_s)
+            _matrix = [reduce_vector(i) for i in cst.transformation_matrix]
+            _s = grain_a.copy()
+            _s.make_supercell(_matrix)
+            sm = StructureMatcher(attempt_supercell=True, primitive_cell=False)
+            _matrix = sm.get_supercell_matrix(_s, self)
+            matrix = [reduce_vector(i) for i in _matrix]
+            grain_a = self.copy()
+            grain_a.make_supercell(matrix)
+            # grain_a.make_supercell(get_sc_fromstruct(grain_a, min_length=min(grain_a.lattice.abc),
+            #                                          force_diagonal=True))
+            # grain_a.make_supercell(get_sc_fromstruct(grain_a).transpose())
             # grain_a.set_orthogonal_grain()
             # grain_b = grain_b.set_orthogonal_grain()
 
+        # grain_a.to(filename='POSCAR')
+        # exit()
         temp_a = grain_a.copy()
         scale_vector = [1, 1]
         scale_vector.insert(gb_direction, uc_b)

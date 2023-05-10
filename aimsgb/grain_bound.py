@@ -11,7 +11,7 @@ from numpy import sin, cos, ceil, radians, inner, identity
 from numpy.linalg import inv, det, norm, solve
 from pymatgen.core.lattice import Lattice
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-
+from pymatgen.transformations.advanced_transformations import CubicSupercellTransformation
 from aimsgb import Grain
 from aimsgb.utils import reduce_vector, co_prime, plus_minus_gen, \
     is_integer, get_smallest_multiplier, reduce_integer, transpose_matrix
@@ -461,14 +461,9 @@ class GrainBoundary(object):
         for i, v in enumerate(self.csl.transpose()):
             if self.plane == list(v):
                 self.gb_direction = i
-        abc = initial_struct.lattice.abc
-        if abc[0] != abc[1] or \
-                any([i != 90 for i in initial_struct.lattice.angles]):
-            warnings.warn("Your input structure is not a conventional standard "
-                          "structure. aimsgb will do the transformation for you.")
-            sg = SpacegroupAnalyzer(initial_struct)
-            new_s = sg.get_conventional_standard_structure()
-            initial_struct = Grain.from_sites(new_s[:])
+        sg = SpacegroupAnalyzer(initial_struct)
+        new_s = sg.get_conventional_standard_structure()
+        initial_struct = Grain.from_sites(new_s[:])
         self._grain_a, self._grain_b = initial_struct.build_grains(
             self.csl, self.gb_direction, uc_a, uc_b)
 
