@@ -6,7 +6,6 @@ from aimsgb.utils import reduce_vector
 from pymatgen.core.structure import Structure, Lattice, PeriodicSite
 from pymatgen.transformations.advanced_transformations import CubicSupercellTransformation
 from pymatgen.analysis.structure_matcher import StructureMatcher
-from pymatgen.analysis.defects.supercells import get_sc_fromstruct, _ase_cubic
 
 __author__ = "Jianli CHENG and Kesong YANG"
 __copyright__ = "Copyright 2018 University of California San Diego"

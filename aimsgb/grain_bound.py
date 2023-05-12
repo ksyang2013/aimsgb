@@ -11,7 +11,6 @@ from numpy import sin, cos, ceil, radians, inner, identity
 from numpy.linalg import inv, det, norm, solve
 from pymatgen.core.lattice import Lattice
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from pymatgen.transformations.advanced_transformations import CubicSupercellTransformation
 from aimsgb import Grain
 from aimsgb.utils import reduce_vector, co_prime, plus_minus_gen, \
     is_integer, get_smallest_multiplier, reduce_integer, transpose_matrix
