@@ -1,6 +1,6 @@
 Introduction
 ============
-aimsgb, an efficient and open-source Python library for generating atomic coordinates in periodic grain boundary models. It is designed to
+aimsgb is an efficient and open-source Python library for generating atomic coordinates in periodic grain boundary models. It is designed to
 construct various grain boundary structures from cubic and non-cubic initial
 configurations. A convenient command line tool has also been provided to enable
 easy and fast construction of tilt and twist boundaries by assigining the degree
@@ -10,7 +10,7 @@ grain boundary properties and facilitate the experimental analysis of grain
 boundary structures as well.
 
 We also provide a web-based GUI to access aimsgb framework: `aimsgb.org
-<http://aimsgb.org/>`_
+<https://aimsgb.org/>`_
 
 Install aimsgb
 ==============
@@ -70,8 +70,7 @@ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR DIRECT
 
 Authors
 =======
-Dr. Jianli Cheng (jic198@ucsd.edu)
-New Email: jianlicheng@lbl.gov
+Dr. Jianli Cheng (chengjianli90@gmail.com)
 
 Prof. Kesong Yang  (kesong@ucsd.edu)
 
