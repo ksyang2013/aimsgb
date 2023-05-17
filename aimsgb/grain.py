@@ -171,7 +171,7 @@ class Grain(Structure):
         # grain_a.to(filename='POSCAR')
         # exit()
 
-        if not all([i == 90 for i in grain_a.lattice.angles]):
+        if not grain_a.lattice.is_orthogonal:
             warnings.warn("The lattice system of the grain is not orthogonal. "
                           "aimsgb will find a supercell of the grain structure "
                           "that is orthogonalized. This may take a while. ")
