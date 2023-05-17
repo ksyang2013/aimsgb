@@ -4,7 +4,7 @@ from __future__ import division
 import sys
 import argparse
 import numpy as np
-from mp_api.client import MPRester, MPRestError
+from mp_api.client import MPRester
 
 from aimsgb import Grain, GBInformation, GrainBoundary
 
@@ -41,11 +41,8 @@ def gb(args):
         initial_struct = Grain.from_file(args.filename)
     elif args.mpid:
         mpr = MPRester()
-        try:
-            s = mpr.get_structure_by_material_id(args.mpid)
-            initial_struct = Grain.from_dict(s.as_dict())
-        except MPRestError:
-            raise MPRestError("Please run 'export MP_API_KEY=YOUR_MAPI_KEY' to setup your api_key first.")
+        s = mpr.get_structure_by_material_id(args.mpid)
+        initial_struct = Grain.from_dict(s.as_dict())
     if initial_struct is None:
         raise ValueError("Please provide either filename or mpid.")
     
