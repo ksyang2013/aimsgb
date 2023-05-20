@@ -38,7 +38,7 @@ Method 2: Use Git to install
 
 Usage
 ==================
-Refer to the [documentation](https://aimsgb-docs.readthedocs.io/en/latest/) for more details.
+Refer to the `documentation<https://aimsgb-docs.readthedocs.io/en/latest/>`_ for more details.
 
 How to cite aimsgb
 ==================
