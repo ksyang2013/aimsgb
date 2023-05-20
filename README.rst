@@ -5,9 +5,6 @@ construct various grain boundary structures from cubic and non-cubic initial
 configurations. A convenient command line tool has also been provided to enable
 easy and fast construction of tilt and twist boundaries by assigining the degree
 of fit (Σ), rotation axis, grain boundary plane and initial crystal structure.
-aimsgb is expected to greatly accelerate the theoretical investigation of
-grain boundary properties and facilitate the experimental analysis of grain
-boundary structures as well.
 
 We also provide a web-based GUI to access aimsgb framework: `aimsgb.org
 <https://aimsgb.org/>`_
@@ -38,6 +35,10 @@ Method 2: Use Git to install
 
     pip install -e .
 
+
+Usage
+==================
+Refer to the [documentation](https://aimsgb-docs.readthedocs.io/en/latest/) for more details.
 
 How to cite aimsgb
 ==================
