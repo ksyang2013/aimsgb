@@ -4,7 +4,6 @@ from __future__ import division
 import sys
 import argparse
 import numpy as np
-from mp_api.client import MPRester
 
 from aimsgb import Grain, GBInformation, GrainBoundary
 
@@ -40,9 +39,7 @@ def gb(args):
     if args.filename:
         initial_struct = Grain.from_file(args.filename)
     elif args.mpid:
-        mpr = MPRester()
-        s = mpr.get_structure_by_material_id(args.mpid)
-        initial_struct = Grain.from_dict(s.as_dict())
+        initial_struct = Grain.from_mp_id(args.mpid)
     if initial_struct is None:
         raise ValueError("Please provide either filename or mpid.")
     

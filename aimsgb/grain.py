@@ -45,6 +45,22 @@ class Grain(Structure):
         grain_b.rotate_sites(theta=np.radians(180), axis=axis, anchor=anchor)
         return grain_b
 
+    @classmethod
+    def from_mp_id(cls, mp_id):
+        """
+        Get a structure from Materials Project database.
+        Args:
+            mp_id (str): Materials Project ID.
+
+        Returns:
+            A structure object.
+        """
+        from mp_api.client import MPRester
+
+        mpr = MPRester()
+        s = mpr.get_structure_by_material_id(mp_id, conventional_unit_cell=True)
+        return cls.from_dict(s.as_dict())
+
     def make_supercell(self, scaling_matrix):
         """
         Create a supercell. Very similar to pymatgen's Structure.make_supercell
