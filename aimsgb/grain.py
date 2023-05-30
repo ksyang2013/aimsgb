@@ -226,3 +226,29 @@ class Grain(Structure):
         # grain_b.to(filename='POSCAR')
         # exit(0)
         return grain_a, grain_b
+
+    @classmethod
+    def stack_grains(cls, grains, vacuum=0.0, add_if_dist=0.0, to_primitive=True):
+        abc_a = list(self.grain_a.lattice.abc)
+        abc_b, angles = np.reshape(self.grain_b.lattice.parameters, (2, 3))
+        if ind == 1:
+            l = (abc_a[ind] + add_if_dist) * sin(radians(angles[2]))
+        else:
+            l = abc_a[ind] + add_if_dist
+        abc_a[ind] += abc_b[ind] + 2 * add_if_dist + vacuum
+        new_lat = Lattice.from_parameters(*abc_a, *angles)
+        a_fcoords = new_lat.get_fractional_coords(self.grain_a.cart_coords)
+
+        grain_a = Grain(new_lat, self.grain_a.species, a_fcoords)
+        l_vector = [0, 0]
+        l_vector.insert(ind, l)
+        b_fcoords = new_lat.get_fractional_coords(
+            self.grain_b.cart_coords + l_vector)
+        grain_b = Grain(new_lat, self.grain_b.species, b_fcoords)
+
+        gb = Grain.from_sites(grain_a[:] + grain_b[:])
+        gb = gb.get_sorted_structure()
+        if to_primitive:
+            gb = gb.get_primitive_structure()
+
+        return cls()    

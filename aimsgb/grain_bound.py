@@ -222,7 +222,7 @@ def orthogonalize_csl(csl, axis):
     for i in range(3):
         for j in range(i + 1, 3):
             if not np.allclose(np.dot(csl[i], csl[j]), 0):
-                raise ValueError("Non-orthogonal basis: %s" % csl)
+                raise ValueError(f"Non-orthogonal basis: {csl}")
     return csl.round().astype(int)
 
 
@@ -252,29 +252,29 @@ class GBInformation(dict):
 
     def __str__(self):
         axis_str = "".join(map(str, self.axis))
-        outs = ["Grain boundary information for rotation axis: %s" % axis_str,
-                "Show the sigma values up to %s (Note: * means twist GB)"
-                % (self.max_sigma)]
+        outs = [f"Grain boundary information for rotation axis: {axis_str}",
+                f"Show the sigma values up to {self.max_sigma} (Note: * means twist GB, Theta is the rotation angle)"
+                ]
         data = []
-        to_s = lambda x: "%.2f" % x
+        to_s = lambda x: f"{x:.2f}"
         for key, item in sorted(self.items()):
-            for i, value in enumerate(item["plane"]):
+            for i, value in enumerate(item["GB plane"]):
                 count = -1
                 for v in value:
                     count += 1
-                    plane_str = " ".join(map(str, v))
+                    plane_str = f"({' '.join(map(str, v))})"
                     if v == list(self.axis):
                         plane_str += "*"
                     if count == 0:
-                        row = [key, to_s(self[key]["theta"][i])]
+                        row = [key, to_s(self[key]["Theta"][i])]
                     else:
                         row = [None, None]
                     csl = [" ".join('%2s' % k for k in j)
-                           for j in self[key]["csl"][i]]
-                    row.extend(["(%s)" % plane_str, csl[count]])
+                           for j in self[key]["CSL matrix"][i]]
+                    row.extend([plane_str, csl[count]])
                     data.append(row)
         outs.append(tabulate(data, numalign="center", tablefmt='orgtbl',
-                             headers=["Sigma", "Theta", "GB Plane", "CSL"]))
+                             headers=["Sigma", "Theta", "GB plane", "CSL matrix"]))
         return "\n".join(outs)
 
     def get_gb_info(self):
@@ -304,7 +304,7 @@ class GBInformation(dict):
 
         if not sigma_theta:
             raise ValueError("Cannot find any matching GB. Most likely there "
-                             "is no sigma %s%s GB." % (self.max_sigma, self.axis))
+                             f"is no sigma {self.max_sigma}{self.axis} GB.")
         for sigma in sigma_theta:
             sigma_theta[sigma] = sorted(sigma_theta[sigma], key=lambda t: t[0])
             min_theta = sigma_theta[sigma][0][0]
@@ -332,15 +332,15 @@ class GBInformation(dict):
                         break
                 all_csl = [csl, ext_csl]
                 if ind:
-                    gb_info[sigma] = {"theta": [min_theta, 90 - min_theta]}
+                    gb_info[sigma] = {"Theta": [min_theta, 90 - min_theta]}
                 else:
-                    gb_info[sigma] = {"theta": [90 - min_theta, min_theta]}
+                    gb_info[sigma] = {"Theta": [90 - min_theta, min_theta]}
             else:
-                gb_info[sigma] = {"theta": [min_theta]}
+                gb_info[sigma] = {"Theta": [min_theta]}
 
-            gb_info[sigma].update({"plane": [[list(j) for j in i.transpose()]
+            gb_info[sigma].update({"GB plane": [[list(j) for j in i.transpose()]
                                              for i in all_csl],
-                                   "rot_matrix": rot_matrix, "csl": all_csl})
+                                   "Rotation matrix": rot_matrix, "CSL matrix": all_csl})
         return gb_info
 
     def get_theta(self, m, n):
@@ -450,8 +450,8 @@ class GrainBoundary(object):
         if sigma % 2 == 0:
             reduce_sigma = reduce_integer(sigma)
             warnings.warn(
-                "{} is an even number. However sigma must be an odd number. "
-                "We will choose sigma={}.".format(sigma, reduce_sigma),
+                f"{sigma} is an even number. However sigma must be an odd number. "
+                f"We will choose sigma={reduce_sigma}.",
                 RuntimeWarning)
             sigma = reduce_sigma
         self.sigma = sigma
@@ -471,7 +471,7 @@ class GrainBoundary(object):
         """
         Rotation matrix for calculating CSL matrix
         """
-        return self.gb_info[self.sigma]["rot_matrix"]
+        return self.gb_info[self.sigma]["Rotation matrix"]
 
     @property
     def theta(self):
@@ -479,20 +479,20 @@ class GrainBoundary(object):
         Rotation angle for calculating rotation matrix and to bring two grains
         into a perfect match
         """
-        return self.gb_info[self.sigma]["theta"]
+        return self.gb_info[self.sigma]["Theta"]
 
     @property
     def csl(self):
         """
         CSL matrix
         """
-        for i, v in enumerate(self.gb_info[self.sigma]["plane"]):
+        for i, v in enumerate(self.gb_info[self.sigma]["GB plane"]):
             if self.plane in v:
-                return self.gb_info[self.sigma]["csl"][i]
+                return self.gb_info[self.sigma]["CSL matrix"][i]
         avail_plane = ", ".join([", ".join([" ".join(map(str, j)) for j in i])
-                                 for i in self.gb_info[self.sigma]["plane"]])
-        raise ValueError("The given GB plane '%s' cannot be realized. Choose "
-                         "the plane in [%s]" % (self.plane_str, avail_plane))
+                                 for i in self.gb_info[self.sigma]["GB plane"]])
+        raise ValueError(f"The given GB plane '{self.plane_str}' cannot be realized. Choose "
+                         f"the plane in [{avail_plane}]")
 
     @property
     def grain_a(self):
@@ -537,7 +537,7 @@ class GrainBoundary(object):
         delete_layer = delete_layer.lower()
         delete = re.findall('(\d+)(\w)', delete_layer)
         if len(delete) != 4:
-            raise ValueError("'%s' is not supported. Please make sure the format "
+            raise ValueError(f"'{delete_layer}' is not supported. Please make sure the format "
                              "is 0b0t0b0t.")
         for i, v in enumerate(delete):
             for j in range(int(v[0])):
