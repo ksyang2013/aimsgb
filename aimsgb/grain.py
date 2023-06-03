@@ -1,3 +1,4 @@
+import copy
 import warnings
 import numpy as np
 from functools import reduce
@@ -161,9 +162,27 @@ class Grain(Structure):
             new_layers.append(sorted(tmp))
         return new_layers
 
-    def set_orthogonal_grain(self):
-        a, b, c = self.lattice.abc
-        self.lattice = Lattice.orthorhombic(a, b, c)
+    # def set_orthogonal_grain(self):
+    #     a, b, c = self.lattice.abc
+    #     self.lattice = Lattice.orthorhombic(a, b, c)
+
+    def set_orthogonal_grain(self, gb_direction=2):
+        abc = list(self.lattice.matrix)
+        _abc = copy.deepcopy(abc)
+        _abc.pop(gb_direction)
+        new_c = np.cross(*_abc)
+        new_c /= np.linalg.norm(new_c)
+        new_c = np.dot(abc[gb_direction], new_c) * new_c
+        _abc.insert(gb_direction, new_c)
+        new_latt = Lattice(_abc)
+        return Grain(
+            lattice=new_latt, 
+            species=self.species_and_occu, 
+            coords=self.cart_coords,
+            coords_are_cartesian=True,
+            site_properties=self.site_properties
+        )
+
 
     def build_grains(self, csl, gb_direction, uc_a=1, uc_b=1):
         """
@@ -203,11 +222,14 @@ class Grain(Structure):
             matrix = [reduce_vector(i) for i in _matrix]
             grain_a = self.copy()
             grain_a.make_supercell(matrix)
+
             # grain_a.make_supercell(get_sc_fromstruct(grain_a, min_length=min(grain_a.lattice.abc),
-            #                                          force_diagonal=True))
+                                                    #  force_diagonal=True))
             # grain_a.make_supercell(get_sc_fromstruct(grain_a).transpose())
+
             # grain_a.set_orthogonal_grain()
             # grain_b = grain_b.set_orthogonal_grain()
+            # grain_a = grain_a.set_orthogonal_grain(gb_direction)
 
         # grain_a.to(filename='POSCAR')
         # exit()
