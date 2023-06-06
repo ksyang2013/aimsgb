@@ -1,5 +1,7 @@
+import re
 import warnings
 import numpy as np
+from numpy import sin, radians
 from functools import reduce
 from itertools import groupby
 from aimsgb.utils import reduce_vector
@@ -228,27 +230,61 @@ class Grain(Structure):
         return grain_a, grain_b
 
     @classmethod
-    def stack_grains(cls, grains, vacuum=0.0, add_if_dist=0.0, to_primitive=True):
-        abc_a = list(self.grain_a.lattice.abc)
-        abc_b, angles = np.reshape(self.grain_b.lattice.parameters, (2, 3))
-        if ind == 1:
-            l = (abc_a[ind] + add_if_dist) * sin(radians(angles[2]))
+    def stack_grains(cls, grain_a, grain_b, vacuum=0.0, gap=0.0, direction=2,
+                     delete_layer="0b0t0b0t", tol=0.25, to_primitive=True):
+        """
+        Build an interface structure by stacking two grains along a given direction.
+        The grain_b a- and b-vectors will be forced to be the grain_a's
+        a- and b-vectors.
+        Args:
+            grain_a (Grain): Substrate for the interface structure
+            grain_b (Grain): Film for the interface structure
+            vacuum (float): Vacuum space above the film in Angstroms. Default to 0.0
+            gap (float): Gap between substrate and film in Angstroms. Default to 0.0
+            direction (int): Stacking direction of the interface structure. 0: x, 1: y, 2: z.
+            delete_layer (str): Delete top and bottom layers of the substrate and film.
+                8 characters in total. The first 4 characters is for the substrate and
+                the other 4 is for the film. "b" means bottom layer and "t" means
+                top layer. Integer represents the number of layers to be deleted.
+                Default to "0b0t0b0t", which means no deletion of layers. The
+                direction of top and bottom layers is based on the given direction.
+            tol (float): Tolerance factor in Angstroms to determine whether two
+                atoms are at the same plane. Default to 0.25
+            to_primitive (bool): Whether to get primitive structure of GB. Default to true.
+        Returns:
+             GB structure (Grain)
+        """
+        delete_layer = delete_layer.lower()
+        delete = re.findall('(\d+)(\w)', delete_layer)
+        if len(delete) != 4:
+            raise ValueError(f"'{delete_layer}' is not supported. Please make sure the format "
+                             "is 0b0t0b0t.")
+        for i, v in enumerate(delete):
+            for j in range(int(v[0])):
+                if i <= 1:
+                    grain_a.delete_bt_layer(v[1], tol, direction)
+                else:
+                    grain_b.delete_bt_layer(v[1], tol, direction)
+        abc_a = list(grain_a.lattice.abc)
+        abc_b, angles = np.reshape(grain_b.lattice.parameters, (2, 3))
+        if direction == 1:
+            l = (abc_a[direction] + gap) * sin(radians(angles[2]))
         else:
-            l = abc_a[ind] + add_if_dist
-        abc_a[ind] += abc_b[ind] + 2 * add_if_dist + vacuum
+            l = abc_a[direction] + gap
+        abc_a[direction] += abc_b[direction] + 2 * gap + vacuum
         new_lat = Lattice.from_parameters(*abc_a, *angles)
-        a_fcoords = new_lat.get_fractional_coords(self.grain_a.cart_coords)
+        a_fcoords = new_lat.get_fractional_coords(grain_a.cart_coords)
 
-        grain_a = Grain(new_lat, self.grain_a.species, a_fcoords)
+        grain_a = Grain(new_lat, grain_a.species, a_fcoords)
         l_vector = [0, 0]
-        l_vector.insert(ind, l)
+        l_vector.insert(direction, l)
         b_fcoords = new_lat.get_fractional_coords(
-            self.grain_b.cart_coords + l_vector)
-        grain_b = Grain(new_lat, self.grain_b.species, b_fcoords)
+            grain_b.cart_coords + l_vector)
+        grain_b = Grain(new_lat, grain_b.species, b_fcoords)
 
-        gb = Grain.from_sites(grain_a[:] + grain_b[:])
-        gb = gb.get_sorted_structure()
+        structure = Grain.from_sites(grain_a[:] + grain_b[:])
+        structure = structure.get_sorted_structure()
         if to_primitive:
-            gb = gb.get_primitive_structure()
+            structure = structure.get_primitive_structure()
 
-        return cls()    
+        return cls.from_dict(structure.as_dict())
