@@ -533,6 +533,8 @@ class GrainBoundary(object):
         Returns:
              GB structure (Grain)
         """
+        warnings.warn("The build_gb method is deprecated. Please use Grain.stack_grains methode instead.")
+        
         ind = self.gb_direction
         delete_layer = delete_layer.lower()
         delete = re.findall('(\d+)(\w)', delete_layer)
