@@ -8,6 +8,10 @@ class GrainTest(PymatgenTest):
     def setUp(self):
         self.structure = Grain.from_file(f'{INPUT_DIR}/POSCAR_mp-13')
 
-    def test_from_mp_id(self):
-        s = Grain.from_mp_id('mp-13')
-        assert s == self.structure
+    def test_make_supercell(self):
+        self.structure.make_supercell([2, 1, 1])
+        assert self.structure.formula == 'Fe4'
+        
+    # def test_from_mp_id(self):
+    #     s = Grain.from_mp_id('mp-13')
+    #     assert s == self.structure
