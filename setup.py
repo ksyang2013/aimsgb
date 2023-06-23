@@ -82,7 +82,7 @@ setup(
     packages=find_packages(),
     version="0.1.3",
     setup_requires=["setuptools>=18.0"],
-    install_requires=["pymatgen", "mp_api", "numpy"],
+    install_requires=["pymatgen", "mp_api", "numpy", "pytest"],
     include_package_data=True,
     author="Jianli Cheng and Kesong YANG",
     maintainer="Jianli Cheng, Sicong JIANG, and Kesong YANG",
