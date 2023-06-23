@@ -62,6 +62,29 @@ class Grain(Structure):
         mpr = MPRester()
         s = mpr.get_structure_by_material_id(mp_id, conventional_unit_cell=True)
         return cls.from_dict(s.as_dict())
+    
+    def add_selective_dynamics(self, fix_list, tol=0.25):
+        """
+        Add selective dynamics properties for sites sorted by layers
+        Args:
+            fix_list (list): A list of layer indices
+            tol (float): Tolerance factor to determnine if atoms in the same layer
+
+        Returns: A Structure object with selective dynamics properties
+
+        """
+        layers = self.sort_sites_in_layers(tol=tol)
+        sd_sites = []
+        new_sites = []
+        for i, l in enumerate(layers):
+            if i in fix_list:
+                sd_sites.extend([[False, False, False]] * len(l))
+            else:
+                sd_sites.extend([[True, True, True]] * len(l))
+            new_sites.extend(l)
+        new_s = Grain.from_sites(new_sites)
+        new_s.add_site_property("selective_dynamics", sd_sites)
+        return new_s.get_sorted_structure()
 
     def make_supercell(self, scaling_matrix):
         """
