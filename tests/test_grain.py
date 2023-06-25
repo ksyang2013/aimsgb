@@ -11,6 +11,14 @@ class GrainTest(PymatgenTest):
     def test_make_supercell(self):
         self.structure.make_supercell([2, 1, 1])
         assert self.structure.formula == 'Fe4'
+
+    def test_delete_bt_layer(self):
+        self.structure.delete_bt_layer('b')
+        assert len(self.structure) == 1
+
+    def test_add_selective_dynamics(self):
+        self.structure.add_selective_dynamics([0])
+        assert self.structure.site_properties['selective_dynamics'] == [[False, False, False], [True, True, True]]
         
     # def test_from_mp_id(self):
     #     s = Grain.from_mp_id('mp-13')
