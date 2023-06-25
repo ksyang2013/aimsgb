@@ -63,7 +63,7 @@ class Grain(Structure):
         s = mpr.get_structure_by_material_id(mp_id, conventional_unit_cell=True)
         return cls.from_dict(s.as_dict())
     
-    def add_selective_dynamics(self, fix_list, tol=0.25):
+    def add_selective_dynamics(self, fix_list, tol=0.25, axis=2):
         """
         Add selective dynamics properties for sites sorted by layers
         Args:
@@ -73,18 +73,15 @@ class Grain(Structure):
         Returns: A Structure object with selective dynamics properties
 
         """
-        layers = self.sort_sites_in_layers(tol=tol)
+        layers = self.sort_sites_in_layers(tol=tol, axis=axis)
         sd_sites = []
-        new_sites = []
         for i, l in enumerate(layers):
             if i in fix_list:
-                sd_sites.extend([[False, False, False]] * len(l))
+                sd_sites.extend(zip([[False, False, False]] * len(l), [_i[1] for _i in l]))
             else:
-                sd_sites.extend([[True, True, True]] * len(l))
-            new_sites.extend(l)
-        new_s = Grain.from_sites(new_sites)
-        new_s.add_site_property("selective_dynamics", sd_sites)
-        return new_s.get_sorted_structure()
+                sd_sites.extend(zip([[True, True, True]] * len(l), [_i[1] for _i in l]))
+        values = [i[0] for i in sorted(sd_sites, key=lambda x: x[1])]
+        self.add_site_property("selective_dynamics", values)
 
     def make_supercell(self, scaling_matrix):
         """
@@ -129,7 +126,7 @@ class Grain(Structure):
 
         l = self.lattice.abc[axis]
         layers = self.sort_sites_in_layers(tol=tol, axis=axis)
-        l_dist = abs(layers[l1][0].coords[axis] - layers[l2][0].coords[axis])
+        l_dist = abs(layers[l1][0][0].coords[axis] - layers[l2][0][0].coords[axis])
         l_vector = [1, 1]
         l_vector.insert(axis, (l - l_dist) / l)
         new_lat = Lattice(self.lattice.matrix * np.array(l_vector)[:, None])
@@ -140,8 +137,8 @@ class Grain(Structure):
         l_dist = 0 if bt == "t" else l_dist
         l_vector = [0, 0]
         l_vector.insert(axis, l_dist)
-        for i in sites:
-            new_sites.append(PeriodicSite(i.specie, i.coords - l_vector,
+        for site, _ in sites:
+            new_sites.append(PeriodicSite(site.specie, site.coords - l_vector,
                                           new_lat, coords_are_cartesian=True))
         self._sites = new_sites
         self._lattice = new_lat
@@ -156,11 +153,12 @@ class Grain(Structure):
             axis (int): The direction of top and bottom layers. 0: x, 1: y, 2: z
 
         Returns:
-            Lists with the sites in the same plane as one list.
+            Lists with a list of (site, index) in the same plane as one list.
         """
-        new_atoms = sorted(self, key=lambda x: x.frac_coords[axis])
+        sites_indices = sorted(zip(self.sites, range(len(self))), 
+                               key=lambda x: x[0].frac_coords[axis])
         layers = []
-        for k, g in groupby(new_atoms, key=lambda x: x.frac_coords[axis]):
+        for k, g in groupby(sites_indices, key=lambda x: x[0].frac_coords[axis]):
             layers.append(list(g))
         new_layers = []
         k = -1
@@ -169,8 +167,8 @@ class Grain(Structure):
                 tmp = layers[i]
                 for j in range(i + 1, len(layers)):
                     if self.lattice.abc[axis] * abs(
-                                    layers[j][0].frac_coords[axis] -
-                                    layers[i][0].frac_coords[axis]) < tol:
+                                    layers[j][0][0].frac_coords[axis] -
+                                    layers[i][0][0].frac_coords[axis]) < tol:
                         tmp.extend(layers[j])
                         k = j
                     else:
@@ -179,13 +177,13 @@ class Grain(Structure):
         # check if the 1st layer and last layer are actually the same layer
         # use the fractional as cartesian doesn't work for unorthonormal
         if self.lattice.abc[axis] * abs(
-                                new_layers[0][0].frac_coords[axis] + 1 -
-                                new_layers[-1][0].frac_coords[axis]) < tol:
+                                new_layers[0][0][0].frac_coords[axis] + 1 -
+                                new_layers[-1][0][0].frac_coords[axis]) < tol:
             tmp = new_layers[0] + new_layers[-1]
             new_layers = new_layers[1:-1]
             new_layers.append(sorted(tmp))
         return new_layers
-
+    
     def set_orthogonal_grain(self):
         a, b, c = self.lattice.abc
         self.lattice = Lattice.orthorhombic(a, b, c)
@@ -298,12 +296,12 @@ class Grain(Structure):
         new_lat = Lattice.from_parameters(*abc_a, *angles)
         a_fcoords = new_lat.get_fractional_coords(grain_a.cart_coords)
 
-        grain_a = Grain(new_lat, grain_a.species, a_fcoords)
+        grain_a = Grain(new_lat, grain_a.species, a_fcoords, site_properties=grain_a.site_properties)
         l_vector = [0, 0]
         l_vector.insert(direction, l)
         b_fcoords = new_lat.get_fractional_coords(
             grain_b.cart_coords + l_vector)
-        grain_b = Grain(new_lat, grain_b.species, b_fcoords)
+        grain_b = Grain(new_lat, grain_b.species, b_fcoords, site_properties=grain_b.site_properties)
 
         structure = Grain.from_sites(grain_a[:] + grain_b[:])
         structure = structure.get_sorted_structure()
