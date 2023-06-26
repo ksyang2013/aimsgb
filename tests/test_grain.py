@@ -16,8 +16,8 @@ class GrainTest(PymatgenTest):
         self.structure.delete_bt_layer('b')
         assert len(self.structure) == 1
 
-    def test_add_selective_dynamics(self):
-        self.structure.add_selective_dynamics([0])
+    def test_fix_sites_in_layers(self):
+        self.structure.fix_sites_in_layers([0])
         assert self.structure.site_properties['selective_dynamics'] == [[False, False, False], [True, True, True]]
         
     # def test_from_mp_id(self):
