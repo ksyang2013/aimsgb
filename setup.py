@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 
 
 long_desc = """
@@ -79,10 +79,10 @@ http://materials.ucsd.edu/
 
 setup(
     name="aimsgb",
-    packages=find_packages(),
-    version="0.1.3",
+    packages=find_namespace_packages(exclude=["*.tests"]),
+    version="1.0.0",
     setup_requires=["setuptools>=18.0"],
-    install_requires=["pymatgen", "mp_api", "numpy"],
+    install_requires=["pymatgen", "mp_api", "numpy", "pytest"],
     include_package_data=True,
     author="Jianli Cheng and Kesong YANG",
     maintainer="Jianli Cheng, Sicong JIANG, and Kesong YANG",
@@ -95,11 +95,9 @@ setup(
     long_description=long_desc,
     keywords=["material science", "grain boundary", "molecular simulation"],
     classifiers=[
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
         "Operating System :: OS Independent",

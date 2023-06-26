@@ -1,6 +1,8 @@
 import copy
+import re
 import warnings
 import numpy as np
+from numpy import sin, radians
 from functools import reduce
 from itertools import groupby
 from aimsgb.utils import reduce_vector
@@ -50,6 +52,7 @@ class Grain(Structure):
     def from_mp_id(cls, mp_id):
         """
         Get a structure from Materials Project database.
+
         Args:
             mp_id (str): Materials Project ID.
 
@@ -61,6 +64,27 @@ class Grain(Structure):
         mpr = MPRester()
         s = mpr.get_structure_by_material_id(mp_id, conventional_unit_cell=True)
         return cls.from_dict(s.as_dict())
+    
+    def fix_sites_in_layers(self, layer_indices, tol=0.25, axis=2):
+        """
+        Fix sites in certain layers. The layer by layer direction is given by axis.
+        This function is useful for selective dynamics calculations in VASP.
+
+        Args:
+            layer_indices (list): A list of layer indices.
+            tol (float): Tolerance factor in Angstrom to determnine if sites are 
+                in the same layer. Default to 0.25.
+            axis (int): The direction to sort the sites by layers. 0: x, 1: y, 2: z
+        """
+        layers = self.sort_sites_in_layers(tol=tol, axis=axis)
+        sd_sites = []
+        for i, l in enumerate(layers):
+            if i in layer_indices:
+                sd_sites.extend(zip([[False, False, False]] * len(l), [_i[1] for _i in l]))
+            else:
+                sd_sites.extend(zip([[True, True, True]] * len(l), [_i[1] for _i in l]))
+        values = [i[0] for i in sorted(sd_sites, key=lambda x: x[1])]
+        self.add_site_property("selective_dynamics", values)
 
     def make_supercell(self, scaling_matrix):
         """
@@ -89,14 +113,13 @@ class Grain(Structure):
     def delete_bt_layer(self, bt, tol=0.25, axis=2):
         """
         Delete bottom or top layer of the structure.
+
         Args:
             bt (str): Specify whether it's a top or bottom layer delete. "b"
                 means bottom layer and "t" means top layer.
-            tol (float), Angstrom: Tolerance factor to determine whether two
-                atoms are at the same plane.
-                Default to 0.25
-            axis (int): The direction of top and bottom layers. 0: x, 1: y, 2: z
-
+            tol (float): Tolerance factor in Angstrom to determnine if sites are 
+                in the same layer. Default to 0.25.
+            axis (int): The direction to sort the sites by layers. 0: x, 1: y, 2: z
         """
         if bt == "t":
             l1, l2 = (-1, -2)
@@ -105,7 +128,7 @@ class Grain(Structure):
 
         l = self.lattice.abc[axis]
         layers = self.sort_sites_in_layers(tol=tol, axis=axis)
-        l_dist = abs(layers[l1][0].coords[axis] - layers[l2][0].coords[axis])
+        l_dist = abs(layers[l1][0][0].coords[axis] - layers[l2][0][0].coords[axis])
         l_vector = [1, 1]
         l_vector.insert(axis, (l - l_dist) / l)
         new_lat = Lattice(self.lattice.matrix * np.array(l_vector)[:, None])
@@ -116,27 +139,28 @@ class Grain(Structure):
         l_dist = 0 if bt == "t" else l_dist
         l_vector = [0, 0]
         l_vector.insert(axis, l_dist)
-        for i in sites:
-            new_sites.append(PeriodicSite(i.specie, i.coords - l_vector,
+        for site, _ in sites:
+            new_sites.append(PeriodicSite(site.specie, site.coords - l_vector,
                                           new_lat, coords_are_cartesian=True))
         self._sites = new_sites
         self._lattice = new_lat
 
     def sort_sites_in_layers(self, tol=0.25, axis=2):
         """
-        Sort the sites in a structure layer by layer.
+        Sort the sites in a structure by layers.
 
         Args:
-            tol (float): tolerance factor when determine whether two atoms are
-                are at the same plane. Angstrom
-            axis (int): The direction of top and bottom layers. 0: x, 1: y, 2: z
+            tol (float): Tolerance factor in Angstrom to determnine if sites are 
+                in the same layer. Default to 0.25.
+            axis (int): The direction to sort the sites by layers. 0: x, 1: y, 2: z
 
         Returns:
-            Lists with the sites in the same plane as one list.
+            Lists with a list of (site, index) in the same plane as one list.
         """
-        new_atoms = sorted(self, key=lambda x: x.frac_coords[axis])
+        sites_indices = sorted(zip(self.sites, range(len(self))), 
+                               key=lambda x: x[0].frac_coords[axis])
         layers = []
-        for k, g in groupby(new_atoms, key=lambda x: x.frac_coords[axis]):
+        for k, g in groupby(sites_indices, key=lambda x: x[0].frac_coords[axis]):
             layers.append(list(g))
         new_layers = []
         k = -1
@@ -145,8 +169,8 @@ class Grain(Structure):
                 tmp = layers[i]
                 for j in range(i + 1, len(layers)):
                     if self.lattice.abc[axis] * abs(
-                                    layers[j][0].frac_coords[axis] -
-                                    layers[i][0].frac_coords[axis]) < tol:
+                                    layers[j][0][0].frac_coords[axis] -
+                                    layers[i][0][0].frac_coords[axis]) < tol:
                         tmp.extend(layers[j])
                         k = j
                     else:
@@ -155,8 +179,8 @@ class Grain(Structure):
         # check if the 1st layer and last layer are actually the same layer
         # use the fractional as cartesian doesn't work for unorthonormal
         if self.lattice.abc[axis] * abs(
-                                new_layers[0][0].frac_coords[axis] + 1 -
-                                new_layers[-1][0].frac_coords[axis]) < tol:
+                                new_layers[0][0][0].frac_coords[axis] + 1 -
+                                new_layers[-1][0][0].frac_coords[axis]) < tol:
             tmp = new_layers[0] + new_layers[-1]
             new_layers = new_layers[1:-1]
             new_layers.append(sorted(tmp))
@@ -186,9 +210,9 @@ class Grain(Structure):
 
     def build_grains(self, csl, gb_direction, uc_a=1, uc_b=1):
         """
-        Build structures for grain A and B from CSL matrix, number of unit cell
-        of grain A and number of unit cell of grain B. Each grain is essentially
-        a supercell for the initial structure.
+        Build structures for grain A and B from the coincidnet site lattice (CSL) matrix, 
+        number of unit cell of grain A and number of unit cell of grain B. Each grain
+        is essentially a supercell of the initial structure.
 
         Args:
             csl (3x3 matrix): CSL matrix (scaling matrix)
@@ -248,3 +272,65 @@ class Grain(Structure):
         # grain_b.to(filename='POSCAR')
         # exit(0)
         return grain_a, grain_b
+
+    @classmethod
+    def stack_grains(cls, grain_a, grain_b, vacuum=0.0, gap=0.0, direction=2,
+                     delete_layer="0b0t0b0t", tol=0.25, to_primitive=True):
+        """
+        Build an interface structure by stacking two grains along a given direction.
+        The grain_b a- and b-vectors will be forced to be the grain_a's
+        a- and b-vectors.
+
+        Args:
+            grain_a (Grain): Substrate for the interface structure
+            grain_b (Grain): Film for the interface structure
+            vacuum (float): Vacuum space above the film in Angstroms. Default to 0.0
+            gap (float): Gap between substrate and film in Angstroms. Default to 0.0
+            direction (int): Stacking direction of the interface structure. 0: x, 1: y, 2: z.
+            delete_layer (str): Delete top and bottom layers of the substrate and film.
+                8 characters in total. The first 4 characters is for the substrate and
+                the other 4 is for the film. "b" means bottom layer and "t" means
+                top layer. Integer represents the number of layers to be deleted.
+                Default to "0b0t0b0t", which means no deletion of layers. The
+                direction of top and bottom layers is based on the given direction.
+            tol (float): Tolerance factor in Angstrom to determnine if sites are 
+                in the same layer. Default to 0.25.
+            to_primitive (bool): Whether to get primitive structure of GB. Default to true.
+
+        Returns:
+             GB structure (Grain)
+        """
+        delete_layer = delete_layer.lower()
+        delete = re.findall('(\d+)(\w)', delete_layer)
+        if len(delete) != 4:
+            raise ValueError(f"'{delete_layer}' is not supported. Please make sure the format "
+                             "is 0b0t0b0t.")
+        for i, v in enumerate(delete):
+            for j in range(int(v[0])):
+                if i <= 1:
+                    grain_a.delete_bt_layer(v[1], tol, direction)
+                else:
+                    grain_b.delete_bt_layer(v[1], tol, direction)
+        abc_a = list(grain_a.lattice.abc)
+        abc_b, angles = np.reshape(grain_b.lattice.parameters, (2, 3))
+        if direction == 1:
+            l = (abc_a[direction] + gap) * sin(radians(angles[2]))
+        else:
+            l = abc_a[direction] + gap
+        abc_a[direction] += abc_b[direction] + 2 * gap + vacuum
+        new_lat = Lattice.from_parameters(*abc_a, *angles)
+        a_fcoords = new_lat.get_fractional_coords(grain_a.cart_coords)
+
+        grain_a = Grain(new_lat, grain_a.species, a_fcoords, site_properties=grain_a.site_properties)
+        l_vector = [0, 0]
+        l_vector.insert(direction, l)
+        b_fcoords = new_lat.get_fractional_coords(
+            grain_b.cart_coords + l_vector)
+        grain_b = Grain(new_lat, grain_b.species, b_fcoords, site_properties=grain_b.site_properties)
+
+        structure = Grain.from_sites(grain_a[:] + grain_b[:])
+        structure = structure.get_sorted_structure()
+        if to_primitive:
+            structure = structure.get_primitive_structure()
+
+        return cls.from_dict(structure.as_dict())

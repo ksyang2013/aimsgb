@@ -47,9 +47,8 @@ def gb(args):
     to_primitive = False if args.conventional else True
     gb.build_gb(args.vacuum, args.add_if_dist, to_primitive, args.delete_layer,
                 args.tol).to(filename=args.out, fmt=args.fmt)
-    print("CSL Matrix (det=%.1f):\n%s" % (np.linalg.det(gb.csl), gb.csl))
-    print("%s of sigma%s[%s]/(%s) is created"
-          % (args.out, gb.sigma, args.axis, gb.plane_str))
+    print(f"CSL Matrix (det={np.linalg.det(gb.csl)}):\n{gb.csl}")
+    print(f"{args.out} of sigma{gb.sigma}[{args.axis}]/({gb.plane_str}) is created")
 
 
 def main():
