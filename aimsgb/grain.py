@@ -51,6 +51,7 @@ class Grain(Structure):
     def from_mp_id(cls, mp_id):
         """
         Get a structure from Materials Project database.
+
         Args:
             mp_id (str): Materials Project ID.
 
@@ -63,21 +64,21 @@ class Grain(Structure):
         s = mpr.get_structure_by_material_id(mp_id, conventional_unit_cell=True)
         return cls.from_dict(s.as_dict())
     
-    def add_selective_dynamics(self, fix_list, tol=0.25, axis=2):
+    def fix_sites_in_layers(self, layer_indices, tol=0.25, axis=2):
         """
-        Add selective dynamics properties for sites sorted by layers
+        Fix sites in certain layers. The layer by layer direction is given by axis.
+        This function is useful for selective dynamics calculations in VASP.
+
         Args:
-            fix_list (list): A list of layer indices
+            layer_indices (list): A list of layer indices.
             tol (float): Tolerance factor in Angstrom to determnine if sites are 
                 in the same layer. Default to 0.25.
-
-        Returns: A Structure object with selective dynamics properties
-
+            axis (int): The direction to sort the sites by layers. 0: x, 1: y, 2: z
         """
         layers = self.sort_sites_in_layers(tol=tol, axis=axis)
         sd_sites = []
         for i, l in enumerate(layers):
-            if i in fix_list:
+            if i in layer_indices:
                 sd_sites.extend(zip([[False, False, False]] * len(l), [_i[1] for _i in l]))
             else:
                 sd_sites.extend(zip([[True, True, True]] * len(l), [_i[1] for _i in l]))
@@ -111,13 +112,13 @@ class Grain(Structure):
     def delete_bt_layer(self, bt, tol=0.25, axis=2):
         """
         Delete bottom or top layer of the structure.
+
         Args:
             bt (str): Specify whether it's a top or bottom layer delete. "b"
                 means bottom layer and "t" means top layer.
             tol (float): Tolerance factor in Angstrom to determnine if sites are 
                 in the same layer. Default to 0.25.
-            axis (int): The direction of top and bottom layers. 0: x, 1: y, 2: z
-
+            axis (int): The direction to sort the sites by layers. 0: x, 1: y, 2: z
         """
         if bt == "t":
             l1, l2 = (-1, -2)
@@ -145,12 +146,12 @@ class Grain(Structure):
 
     def sort_sites_in_layers(self, tol=0.25, axis=2):
         """
-        Sort the sites in a structure layer by layer.
+        Sort the sites in a structure by layers.
 
         Args:
             tol (float): Tolerance factor in Angstrom to determnine if sites are 
                 in the same layer. Default to 0.25.
-            axis (int): The direction of top and bottom layers. 0: x, 1: y, 2: z
+            axis (int): The direction to sort the sites by layers. 0: x, 1: y, 2: z
 
         Returns:
             Lists with a list of (site, index) in the same plane as one list.
@@ -190,9 +191,9 @@ class Grain(Structure):
 
     def build_grains(self, csl, gb_direction, uc_a=1, uc_b=1):
         """
-        Build structures for grain A and B from CSL matrix, number of unit cell
-        of grain A and number of unit cell of grain B. Each grain is essentially
-        a supercell for the initial structure.
+        Build structures for grain A and B from the coincidnet site lattice (CSL) matrix, 
+        number of unit cell of grain A and number of unit cell of grain B. Each grain
+        is essentially a supercell of the initial structure.
 
         Args:
             csl (3x3 matrix): CSL matrix (scaling matrix)
@@ -257,6 +258,7 @@ class Grain(Structure):
         Build an interface structure by stacking two grains along a given direction.
         The grain_b a- and b-vectors will be forced to be the grain_a's
         a- and b-vectors.
+
         Args:
             grain_a (Grain): Substrate for the interface structure
             grain_b (Grain): Film for the interface structure
@@ -272,6 +274,7 @@ class Grain(Structure):
             tol (float): Tolerance factor in Angstrom to determnine if sites are 
                 in the same layer. Default to 0.25.
             to_primitive (bool): Whether to get primitive structure of GB. Default to true.
+
         Returns:
              GB structure (Grain)
         """
