@@ -68,7 +68,8 @@ class Grain(Structure):
         Add selective dynamics properties for sites sorted by layers
         Args:
             fix_list (list): A list of layer indices
-            tol (float): Tolerance factor to determnine if atoms in the same layer
+            tol (float): Tolerance factor in Angstrom to determnine if sites are 
+                in the same layer. Default to 0.25.
 
         Returns: A Structure object with selective dynamics properties
 
@@ -113,9 +114,8 @@ class Grain(Structure):
         Args:
             bt (str): Specify whether it's a top or bottom layer delete. "b"
                 means bottom layer and "t" means top layer.
-            tol (float), Angstrom: Tolerance factor to determine whether two
-                atoms are at the same plane.
-                Default to 0.25
+            tol (float): Tolerance factor in Angstrom to determnine if sites are 
+                in the same layer. Default to 0.25.
             axis (int): The direction of top and bottom layers. 0: x, 1: y, 2: z
 
         """
@@ -148,8 +148,8 @@ class Grain(Structure):
         Sort the sites in a structure layer by layer.
 
         Args:
-            tol (float): tolerance factor when determine whether two atoms are
-                are at the same plane. Angstrom
+            tol (float): Tolerance factor in Angstrom to determnine if sites are 
+                in the same layer. Default to 0.25.
             axis (int): The direction of top and bottom layers. 0: x, 1: y, 2: z
 
         Returns:
@@ -269,8 +269,8 @@ class Grain(Structure):
                 top layer. Integer represents the number of layers to be deleted.
                 Default to "0b0t0b0t", which means no deletion of layers. The
                 direction of top and bottom layers is based on the given direction.
-            tol (float): Tolerance factor in Angstroms to determine whether two
-                atoms are at the same plane. Default to 0.25
+            tol (float): Tolerance factor in Angstrom to determnine if sites are 
+                in the same layer. Default to 0.25.
             to_primitive (bool): Whether to get primitive structure of GB. Default to true.
         Returns:
              GB structure (Grain)
