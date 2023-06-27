@@ -456,15 +456,15 @@ class GrainBoundary(object):
             sigma = reduce_sigma
         self.sigma = sigma
         self.gb_info = GBInformation(self.axis, self.sigma, specific=True)
-        self.gb_direction = None
+        self.direction = None
         for i, v in enumerate(self.csl.transpose()):
             if self.plane == list(v):
-                self.gb_direction = i
+                self.direction = i
         sg = SpacegroupAnalyzer(initial_struct)
         new_s = sg.get_conventional_standard_structure()
         initial_struct = Grain.from_sites(new_s[:])
         self._grain_a, self._grain_b = initial_struct.build_grains(
-            self.csl, self.gb_direction, uc_a, uc_b)
+            self.csl, self.direction, uc_a, uc_b)
 
     @property
     def rot_matrix(self):
@@ -526,7 +526,7 @@ class GrainBoundary(object):
                 the other 4 is for grain B. "b" means bottom layer and "t" means
                 top layer. Integer represents the number of layers to be deleted.
                 Default to "0b0t0b0t", which means no deletion of layers. The
-                direction of top and bottom layers is based on gb_direction.
+                direction of top and bottom layers is based on direction.
             tol (float), Angstrom: Tolerance factor to determine whether two
                 atoms are at the same plane.
                 Default to 0.25
@@ -535,7 +535,7 @@ class GrainBoundary(object):
         """
         warnings.warn("The build_gb method is deprecated. Please use Grain.stack_grains methode instead.")
         
-        ind = self.gb_direction
+        ind = self.direction
         delete_layer = delete_layer.lower()
         delete = re.findall('(\d+)(\w)', delete_layer)
         if len(delete) != 4:
