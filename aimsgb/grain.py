@@ -74,7 +74,7 @@ class Grain(Structure):
             layer_indices (list): A list of layer indices.
             tol (float): Tolerance factor in Angstrom to determnine if sites are 
                 in the same layer. Default to 0.25.
-            direction (int): Direction to sort the sites by layers. 0: x, 1: y, 2: z
+            direction (int): Direction to sort the sites by layers. 0: a, 1: b, 2: c
         """
         layers = self.sort_sites_in_layers(tol=tol, direction=direction)
         sd_sites = []
@@ -119,7 +119,7 @@ class Grain(Structure):
                 means bottom layer and "t" means top layer.
             tol (float): Tolerance factor in Angstrom to determnine if sites are 
                 in the same layer. Default to 0.25.
-            direction (int): Direction to sort the sites by layers. 0: x, 1: y, 2: z
+            direction (int): Direction to sort the sites by layers. 0: a, 1: b, 2: c
         """
         if bt == "t":
             l1, l2 = (-1, -2)
@@ -152,7 +152,7 @@ class Grain(Structure):
         Args:
             tol (float): Tolerance factor in Angstrom to determnine if sites are 
                 in the same layer. Default to 0.25.
-            direction (int): Direction to sort the sites by layers. 0: x, 1: y, 2: z
+            direction (int): Direction to sort the sites by layers. 0: a, 1: b, 2: c
 
         Returns:
             Lists with a list of (site, index) in the same plane as one list.
@@ -216,7 +216,7 @@ class Grain(Structure):
 
         Args:
             csl (3x3 matrix): CSL matrix (scaling matrix)
-            direction (int): Stacking direction of GB. 0: x, 1: y, 2: z
+            direction (int): Stacking direction of GB. 0: a, 1: b, 2: c
             uc_a (int): Number of unit cell of grain A. Default to 1.
             uc_b (int): Number of unit cell of grain B. Default to 1.
 
@@ -286,7 +286,7 @@ class Grain(Structure):
             grain_b (Grain): Film for the interface structure
             vacuum (float): Vacuum space above the film in Angstroms. Default to 0.0
             gap (float): Gap between substrate and film in Angstroms. Default to 0.0
-            direction (int): Stacking direction of the interface structure. 0: x, 1: y, 2: z.
+            direction (int): Stacking direction of the interface structure. 0: a, 1: b, 2: c.
             delete_layer (str): Delete top and bottom layers of the substrate and film.
                 8 characters in total. The first 4 characters is for the substrate and
                 the other 4 is for the film. "b" means bottom layer and "t" means
