@@ -13,11 +13,11 @@ class GrainTest(PymatgenTest):
         assert self.structure.formula == 'Fe4'
 
     def test_delete_bt_layer(self):
-        self.structure.delete_bt_layer('b')
+        self.structure.delete_bt_layer('b', direction=2)
         assert len(self.structure) == 1
 
     def test_fix_sites_in_layers(self):
-        self.structure.fix_sites_in_layers([0])
+        self.structure.fix_sites_in_layers([0], direction=2)
         assert self.structure.site_properties['selective_dynamics'] == [[False, False, False], [True, True, True]]
         
     # def test_from_mp_id(self):
