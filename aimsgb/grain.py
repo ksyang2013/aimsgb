@@ -3,7 +3,7 @@ import re
 import warnings
 import numpy as np
 from numpy import sin, radians
-from functools import reduce
+from functools import reduce, wraps
 from itertools import groupby
 from aimsgb.utils import reduce_vector
 from pymatgen.core.structure import Structure, Lattice, PeriodicSite
@@ -22,15 +22,9 @@ class Grain(Structure):
     """
     We use the Structure class from pymatgen and add several new functions.
     """
-    def __init__(self, lattice, species, coords, charge=None,
-                 validate_proximity=False, to_unit_cell=False,
-                 coords_are_cartesian=False, site_properties=None):
-
-        super(Structure, self).__init__(lattice, species, coords, charge=charge,
-                                        validate_proximity=validate_proximity,
-                                        to_unit_cell=to_unit_cell,
-                                        coords_are_cartesian=coords_are_cartesian,
-                                        site_properties=site_properties)
+    @wraps(Structure.__init__)
+    def __init__(self, *args, **kwargs):
+        super(Structure, self).__init__(*args, **kwargs)
 
         self._sites = list(self._sites)
 
