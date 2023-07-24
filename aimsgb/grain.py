@@ -128,7 +128,7 @@ class Grain(Structure):
         new_lat = Lattice(self.lattice.matrix * np.array(l_vector)[:, None])
 
         layers.pop(l1)
-        sites = reduce(lambda x, y: np.concatenate((x, y), direction=0), layers)
+        sites = reduce(lambda x, y: np.concatenate((x, y), axis=0), layers)
         new_sites = []
         l_dist = 0 if bt == "t" else l_dist
         l_vector = [0, 0]
