@@ -80,7 +80,7 @@ http://materials.ucsd.edu/
 setup(
     name="aimsgb",
     packages=find_namespace_packages(exclude=["*.tests"]),
-    version="1.0.1",
+    version="1.0.2",
     setup_requires=["setuptools>=18.0"],
     install_requires=["pymatgen", "mp_api", "numpy", "pytest"],
     include_package_data=True,
