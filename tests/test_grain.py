@@ -13,8 +13,9 @@ class GrainTest(PymatgenTest):
         assert self.structure.formula == 'Fe4'
 
     def test_delete_bt_layer(self):
+        self.structure.make_supercell([2, 2, 2])
         self.structure.delete_bt_layer('b', direction=2)
-        assert len(self.structure) == 1
+        assert len(self.structure) == 12
 
     def test_fix_sites_in_layers(self):
         self.structure.fix_sites_in_layers([0], direction=2)
