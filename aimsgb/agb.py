@@ -45,8 +45,9 @@ def gb(args):
     
     gb = GrainBoundary(axis, args.sigma, plane, initial_struct, args.uc_a, args.uc_b)
     to_primitive = False if args.conventional else True
-    gb.build_gb(args.vacuum, args.add_if_dist, to_primitive, args.delete_layer,
-                args.tol).to(filename=args.out, fmt=args.fmt)
+    structure = Grain.stack_grains(gb.grain_a, gb.grain_b, direction=gb.direction,
+                                  to_primitive=to_primitive)
+    structure.to(filename=args.out, fmt=args.fmt)
     print(f"CSL Matrix (det={np.linalg.det(gb.csl)}):\n{gb.csl}")
     print(f"{args.out} of sigma{gb.sigma}[{args.axis}]/({gb.plane_str}) is created")
 
