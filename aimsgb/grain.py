@@ -25,17 +25,22 @@ class Grain(Structure):
     @wraps(Structure.__init__)
     def __init__(self, *args, **kwargs):
         super(Structure, self).__init__(*args, **kwargs)
-
         self._sites = list(self._sites)
 
     @staticmethod
     def get_b_from_a(grain_a, csl):
+        """
+        Generate grain_b structure from a grain_a structure by rotating the sites in 
+        grain_a by 180 degree. The rotation axis could be either the 1st or the 2nd 
+        column of the CSL matrix. Here, I use a vector with a shorter length  as the rotation 
+        axis, as it yields a smaller grain boundary structure.
+        """
         grain_b = grain_a.copy()
         csl_t = csl.transpose()
         if sum(abs(csl_t[0]) - abs(csl_t[1])) > 0:
-            axis = (1, 0, 0)
-        else:
             axis = (0, 1, 0)
+        else:
+            axis = (1, 0, 0)
         anchor = grain_b.lattice.get_cartesian_coords(np.array([.0, .0, .0]))
         # print(axis, anchor)
         # exit()
@@ -221,7 +226,7 @@ class Grain(Structure):
         # rotate along a longer axis between a and b
         grain_a = self.copy()
         grain_a.make_supercell(csl_t)
-        # grain_a.to(filename='POSCAR')
+        # grain_a.to(filename='POSCAR_a')
         # exit()
 
         if not grain_a.lattice.is_orthogonal:
@@ -249,13 +254,15 @@ class Grain(Structure):
             # grain_b = grain_b.set_orthogonal_grain()
             # grain_a = grain_a.set_orthogonal_grain(direction)
 
-        # grain_a.to(filename='POSCAR')
+        # grain_a.to(filename='POSCAR_a_1')
         # exit()
         temp_a = grain_a.copy()
         scale_vector = [1, 1]
         scale_vector.insert(direction, uc_b)
         temp_a.make_supercell(scale_vector)
         grain_b = self.get_b_from_a(temp_a, csl)
+        # grain_b = grain_a.copy()
+        # grain_b.rotate_sites(theta=np.radians(180), axis=(1, 0, 0), anchor=[.0, .0, .0])
         # make sure that all fractional coordinates that equal to 1 will become 0
         grain_b.make_supercell([1, 1, 1])
 
@@ -263,8 +270,8 @@ class Grain(Structure):
         scale_vector.insert(direction, uc_a)
         grain_a.make_supercell(scale_vector)
 
-        # grain_b.to(filename='POSCAR')
-        # exit(0)
+        # grain_b.to(filename='POSCAR_b_1')
+        # exit()
         return grain_a, grain_b
 
     @classmethod
@@ -300,7 +307,7 @@ class Grain(Structure):
             raise ValueError(f"'{delete_layer}' is not supported. Please make sure the format "
                              "is 0b0t0b0t.")
         for i, v in enumerate(delete):
-            for j in range(int(v[0])):
+            for _ in range(int(v[0])):
                 if i <= 1:
                     grain_a.delete_bt_layer(v[1], tol, direction)
                 else:
