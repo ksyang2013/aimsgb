@@ -456,15 +456,24 @@ class GrainBoundary(object):
             sigma = reduce_sigma
         self.sigma = sigma
         self.gb_info = GBInformation(self.axis, self.sigma, specific=True)
+        csl = None
+        for i, v in enumerate(self.gb_info[self.sigma]["GB plane"]):
+            if self.plane in v:
+                csl = self.gb_info[self.sigma]["CSL matrix"][i]
+        if csl is None:
+            avail_plane = ", ".join([", ".join([" ".join(map(str, j)) for j in i])
+                                    for i in self.gb_info[self.sigma]["GB plane"]])
+            raise ValueError(f"The given GB plane '{self.plane_str}' cannot be realized. Choose "
+                            f"the plane in [{avail_plane}]")
         self.direction = None
-        for i, v in enumerate(self.csl.transpose()):
+        for i, v in enumerate(csl.transpose()):
             if self.plane == list(v):
                 self.direction = i
         sg = SpacegroupAnalyzer(initial_struct)
         new_s = sg.get_conventional_standard_structure()
         initial_struct = Grain.from_sites(new_s[:])
-        self._grain_a, self._grain_b = initial_struct.build_grains(
-            self.csl, self.direction, uc_a, uc_b)
+        self._grain_a, self._grain_b, self.csl = initial_struct.build_grains(
+            csl, self.direction, uc_a, uc_b)
 
     @property
     def rot_matrix(self):
@@ -481,18 +490,18 @@ class GrainBoundary(object):
         """
         return self.gb_info[self.sigma]["Theta"]
 
-    @property
-    def csl(self):
-        """
-        CSL matrix
-        """
-        for i, v in enumerate(self.gb_info[self.sigma]["GB plane"]):
-            if self.plane in v:
-                return self.gb_info[self.sigma]["CSL matrix"][i]
-        avail_plane = ", ".join([", ".join([" ".join(map(str, j)) for j in i])
-                                 for i in self.gb_info[self.sigma]["GB plane"]])
-        raise ValueError(f"The given GB plane '{self.plane_str}' cannot be realized. Choose "
-                         f"the plane in [{avail_plane}]")
+    # @property
+    # def csl(self):
+    #     """
+    #     CSL matrix
+    #     """
+    #     for i, v in enumerate(self.gb_info[self.sigma]["GB plane"]):
+    #         if self.plane in v:
+    #             return self.gb_info[self.sigma]["CSL matrix"][i]
+    #     avail_plane = ", ".join([", ".join([" ".join(map(str, j)) for j in i])
+    #                              for i in self.gb_info[self.sigma]["GB plane"]])
+    #     raise ValueError(f"The given GB plane '{self.plane_str}' cannot be realized. Choose "
+    #                      f"the plane in [{avail_plane}]")
 
     @property
     def grain_a(self):
