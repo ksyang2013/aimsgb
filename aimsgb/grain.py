@@ -220,7 +220,9 @@ class Grain(Structure):
             uc_b (int): Number of unit cell of grain B. Default to 1.
 
         Returns:
-            Grain objects for grain A and B
+            Grain objects for grain A and B, and CSL matrix. The CSL matrix 
+            may be different from the input CSL matrix if the lattice system 
+            of the grain is not orthogonal.
         """
         csl_t = csl.transpose()
         # rotate along a longer axis between a and b
@@ -237,14 +239,14 @@ class Grain(Structure):
                                                min_length=min(grain_a.lattice.abc))
             _s = grain_a.copy()
             _s = cst.apply_transformation(_s)
-            _matrix = [reduce_vector(i) for i in cst.transformation_matrix]
+            _csl = [reduce_vector(i) for i in cst.transformation_matrix]
             _s = grain_a.copy()
-            _s.make_supercell(_matrix)
+            _s.make_supercell(_csl)
             sm = StructureMatcher(attempt_supercell=True, primitive_cell=False)
-            _matrix = sm.get_supercell_matrix(_s, self)
-            matrix = [reduce_vector(i) for i in _matrix]
+            _csl = sm.get_supercell_matrix(_s, self)
+            csl = np.array([reduce_vector(i) for i in _csl])
             grain_a = self.copy()
-            grain_a.make_supercell(matrix)
+            grain_a.make_supercell(csl)
 
             # grain_a.make_supercell(get_sc_fromstruct(grain_a, min_length=min(grain_a.lattice.abc),
                                                     #  force_diagonal=True))
@@ -272,7 +274,7 @@ class Grain(Structure):
 
         # grain_b.to(filename='POSCAR_b_1')
         # exit()
-        return grain_a, grain_b
+        return grain_a, grain_b, csl
 
     @classmethod
     def stack_grains(cls, grain_a, grain_b, vacuum=0.0, gap=0.0, direction=2,
