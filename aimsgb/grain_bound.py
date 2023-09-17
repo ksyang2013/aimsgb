@@ -43,6 +43,10 @@ STRUCTURE_MATRIX = np.array([identity(3),
                              [[0.5, 0.5, 0],
                               [0, 0.5, 0.5],
                               [0.5, 0, 0.5]]])
+HEXAGONAL_CSL = {"001": {"5": [[1, -5, 0],[ -2, -4, 0],[ 0, 0, -1]],
+                         "17": [[ 1, 7, 0],[ -3, 5, 0],[ 0, 0, -1]],
+                         "13": [[ 2, -8, 0],[ -3, -7, 0],[ 0, 0, -1]]
+                         }}
 
 
 @transpose_matrix
@@ -456,24 +460,29 @@ class GrainBoundary(object):
             sigma = reduce_sigma
         self.sigma = sigma
         self.gb_info = GBInformation(self.axis, self.sigma, specific=True)
-        csl = None
+        self.csl = None
         for i, v in enumerate(self.gb_info[self.sigma]["GB plane"]):
             if self.plane in v:
-                csl = self.gb_info[self.sigma]["CSL matrix"][i]
-        if csl is None:
+                self.csl = self.gb_info[self.sigma]["CSL matrix"][i]
+        if self.csl is None:
             avail_plane = ", ".join([", ".join([" ".join(map(str, j)) for j in i])
                                     for i in self.gb_info[self.sigma]["GB plane"]])
             raise ValueError(f"The given GB plane '{self.plane_str}' cannot be realized. Choose "
                             f"the plane in [{avail_plane}]")
         self.direction = None
-        for i, v in enumerate(csl.transpose()):
+        for i, v in enumerate(self.csl.transpose()):
             if self.plane == list(v):
                 self.direction = i
-        sg = SpacegroupAnalyzer(initial_struct)
-        new_s = sg.get_conventional_standard_structure()
+        new_s = SpacegroupAnalyzer(initial_struct).get_conventional_standard_structure()
         initial_struct = Grain.from_sites(new_s[:])
-        self._grain_a, self._grain_b, self.csl = initial_struct.build_grains(
-            csl, self.direction, uc_a, uc_b)
+
+        if SpacegroupAnalyzer(initial_struct).get_lattice_type() in ['hexagonal', 'rhombohedral']:
+            axis_str = "".join(map(str, self.axis))
+            if HEXAGONAL_CSL.get(axis_str, {}).get(str(self.sigma)):
+                self.csl = np.array(HEXAGONAL_CSL[axis_str][str(self.sigma)])
+
+        self._grain_a, self._grain_b = initial_struct.build_grains(
+            self.csl, self.direction, uc_a, uc_b)
 
     @property
     def rot_matrix(self):
