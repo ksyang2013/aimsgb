@@ -64,6 +64,21 @@ class Grain(Structure):
         s = mpr.get_structure_by_material_id(mp_id, conventional_unit_cell=True)
         return cls.from_dict(s.as_dict())
     
+    def get_orthogonal_matrix(self):
+        warnings.warn("The lattice system of the grain is not orthogonal. "
+                          "aimsgb will find a supercell of the grain structure "
+                          "that is orthogonalized. This may take a while. ")
+        cst = CubicSupercellTransformation(force_90_degrees=True,
+                                           min_length=min(self.lattice.abc))
+        _s = self.copy()
+        _s = cst.apply_transformation(_s)
+        _csl = [reduce_vector(i) for i in cst.transformation_matrix]
+        _s = self.copy()
+        _s.make_supercell(_csl)
+        sm = StructureMatcher(attempt_supercell=True, primitive_cell=False)
+        matrix = sm.get_supercell_matrix(_s, self)
+        return np.array([reduce_vector(i) for i in matrix])
+    
     def fix_sites_in_layers(self, layer_indices, tol=0.25, direction=2):
         """
         Fix sites in certain layers. The layer by layer direction is given by direction.
@@ -190,6 +205,15 @@ class Grain(Structure):
     #     self.lattice = Lattice.orthorhombic(a, b, c)
 
     def set_orthogonal_grain(self, direction=2):
+        """This method was adopted from pymatgen.surface.Slab.get_orthogonal_c_slab.
+        **Note that this breaks inherent symmetries in the grain structure.**
+
+        Args:
+            direction (int): The lattice vector that is forced to be orthogonal. 0: a, 1: b, 2: c
+
+        Returns:
+            (Grain) An orthogonalized grain structure.
+        """
         abc = list(self.lattice.matrix)
         _abc = copy.deepcopy(abc)
         _abc.pop(direction)
@@ -230,40 +254,17 @@ class Grain(Structure):
         # exit()
 
         if not grain_a.lattice.is_orthogonal:
-            warnings.warn("The lattice system of the grain is not orthogonal. "
-                          "aimsgb will find a supercell of the grain structure "
-                          "that is orthogonalized. This may take a while. ")
-            cst = CubicSupercellTransformation(force_90_degrees=True,
-                                               min_length=min(grain_a.lattice.abc))
-            _s = grain_a.copy()
-            _s = cst.apply_transformation(_s)
-            _csl = [reduce_vector(i) for i in cst.transformation_matrix]
-            _s = grain_a.copy()
-            _s.make_supercell(_csl)
-            sm = StructureMatcher(attempt_supercell=True, primitive_cell=False)
-            _csl = sm.get_supercell_matrix(_s, self)
-            csl = np.array([reduce_vector(i) for i in _csl])
-            grain_a = self.copy()
-            grain_a.make_supercell(csl)
-            print(csl)
+            warnings.warn("The lattice system of the grain is not orthogonal. The lattice "
+                          "will be forced to be orthogonal. **Note that this breaks inherent symmetries of the grain.**")
+            grain_a = grain_a.set_orthogonal_grain(direction)
 
-            # grain_a.make_supercell(get_sc_fromstruct(grain_a, min_length=min(grain_a.lattice.abc),
-                                                    #  force_diagonal=True))
-            # grain_a.make_supercell(get_sc_fromstruct(grain_a).transpose())
-
-            # grain_a.set_orthogonal_grain()
-            # grain_b = grain_b.set_orthogonal_grain()
-            # grain_a = grain_a.set_orthogonal_grain(direction)
-
-        # grain_a.to(filename='POSCAR_a_1')
+        # grain_a.to(filename='POSCAR_a')
         # exit()
         temp_a = grain_a.copy()
         scale_vector = [1, 1]
         scale_vector.insert(direction, uc_b)
         temp_a.make_supercell(scale_vector)
         grain_b = self.get_b_from_a(temp_a, csl)
-        # grain_b = grain_a.copy()
-        # grain_b.rotate_sites(theta=np.radians(180), axis=(1, 0, 0), anchor=[.0, .0, .0])
         # make sure that all fractional coordinates that equal to 1 will become 0
         grain_b.make_supercell([1, 1, 1])
 
@@ -271,7 +272,7 @@ class Grain(Structure):
         scale_vector.insert(direction, uc_a)
         grain_a.make_supercell(scale_vector)
 
-        # grain_b.to(filename='POSCAR_b_1')
+        # grain_b.to(filename='POSCAR_b')
         # exit()
         return grain_a, grain_b
 
