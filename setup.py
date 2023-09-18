@@ -80,7 +80,8 @@ http://materials.ucsd.edu/
 setup(
     name="aimsgb",
     packages=find_namespace_packages(exclude=["*.tests"]),
-    version="1.0.3",
+    version="1.1.0",
+    python_requires=">=3.9",
     setup_requires=["setuptools>=18.0"],
     install_requires=["pymatgen", "mp_api", "numpy", "pytest"],
     include_package_data=True,
@@ -96,8 +97,8 @@ setup(
     keywords=["material science", "grain boundary", "molecular simulation"],
     classifiers=[
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
         "Operating System :: OS Independent",
