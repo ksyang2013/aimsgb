@@ -72,9 +72,9 @@ class Grain(Structure):
                                            min_length=min(self.lattice.abc))
         _s = self.copy()
         _s = cst.apply_transformation(_s)
-        _csl = [reduce_vector(i) for i in cst.transformation_matrix]
+        matrix = [reduce_vector(i) for i in cst.transformation_matrix]
         _s = self.copy()
-        _s.make_supercell(_csl)
+        _s.make_supercell(matrix)
         sm = StructureMatcher(attempt_supercell=True, primitive_cell=False)
         matrix = sm.get_supercell_matrix(_s, self)
         return np.array([reduce_vector(i) for i in matrix])
