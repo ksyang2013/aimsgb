@@ -43,10 +43,13 @@ STRUCTURE_MATRIX = np.array([identity(3),
                              [[0.5, 0.5, 0],
                               [0, 0.5, 0.5],
                               [0.5, 0, 0.5]]])
-HEXAGONAL_CSL = {"001": {"5": [[1, -5, 0],[ -2, -4, 0],[ 0, 0, -1]],
-                         "17": [[ 1, 7, 0],[ -3, 5, 0],[ 0, 0, -1]],
-                         "13": [[ 2, -8, 0],[ -3, -7, 0],[ 0, 0, -1]]
-                         }}
+HEXAGONAL_001_CSL = {"5": {"012": [[1, -5, 0], [-2, -4, 0], [0, 0, -1]],
+                           "013": [[1, -7, 0], [-3, -5, 0], [0, 0, -1]]},
+                     "13": {"023": [[ 2, -8, 0], [-3, -7, 0], [0, 0, -1]], 
+                            "015": [[1, -11, 0], [-5, -7, 0], [0, 0, -1]]},
+                     "17": {"014": [[1, 7, 0], [-3, 5, 0], [0, 0, -1]], 
+                            "035": [[2, -8, 0], [-3, -7, 0], [0, 0, -1]]},
+                     }
 
 
 @transpose_matrix
@@ -477,9 +480,11 @@ class GrainBoundary(object):
         initial_struct = Grain.from_sites(new_s[:])
 
         if SpacegroupAnalyzer(initial_struct).get_lattice_type() in ['hexagonal', 'rhombohedral']:
-            axis_str = "".join(map(str, self.axis))
-            if HEXAGONAL_CSL.get(axis_str, {}).get(str(self.sigma)):
-                self.csl = np.array(HEXAGONAL_CSL[axis_str][str(self.sigma)])
+            axis_str = "".join(map(str, sorted(self.axis)))
+            if axis_str == '001':
+                _plane_str = "".join(map(str, sorted(map(abs, self.plane))))
+                if HEXAGONAL_001_CSL.get(str(self.sigma), {}).get(_plane_str):
+                    self.csl = np.array(HEXAGONAL_001_CSL.get(str(self.sigma), {}).get(_plane_str))
 
         self._grain_a, self._grain_b = initial_struct.build_grains(
             self.csl, self.direction, uc_a, uc_b)
