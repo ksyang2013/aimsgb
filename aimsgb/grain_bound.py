@@ -468,10 +468,10 @@ class GrainBoundary(object):
             if self.plane in v:
                 self.csl = self.gb_info[self.sigma]["CSL matrix"][i]
         if self.csl is None:
-            avail_plane = ", ".join([", ".join([" ".join(map(str, j)) for j in i])
+            avail_plane = "', '".join(["', '".join([" ".join(map(str, j)) for j in i])
                                     for i in self.gb_info[self.sigma]["GB plane"]])
             raise ValueError(f"The given GB plane '{self.plane_str}' cannot be realized. Choose "
-                            f"the plane in [{avail_plane}]")
+                             f"the plane in ['{avail_plane}']")
         self.direction = None
         for i, v in enumerate(self.csl.transpose()):
             if self.plane == list(v):
