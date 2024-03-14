@@ -28,23 +28,29 @@ class Grain(Structure):
         self._sites = list(self._sites)
 
     @staticmethod
-    def get_b_from_a(grain_a, csl):
+    def get_b_from_a(grain_a):
         """
         Generate grain_b structure from a grain_a structure by rotating the sites in 
-        grain_a by 180 degree. The rotation axis could be either the 1st or the 2nd 
-        column of the CSL matrix. Here, I use a vector with a shorter length  as the rotation 
-        axis, as it yields a smaller grain boundary structure.
+        grain_a by 180 degree.
         """
-        grain_b = grain_a.copy()
-        csl_t = csl.transpose()
-        if sum(abs(csl_t[0]) - abs(csl_t[1])) > 0:
-            axis = (0, 1, 0)
-        else:
-            axis = (1, 0, 0)
-        anchor = grain_b.lattice.get_cartesian_coords(np.array([.0, .0, .0]))
-        # print(axis, anchor)
-        # exit()
-        grain_b.rotate_sites(theta=np.radians(180), axis=axis, anchor=anchor)
+        for i in range(3):
+            grain_b = grain_a.copy()
+            anchor = grain_b.lattice.get_cartesian_coords(np.array([.0, .0, .0]))
+            axis = [0, 0]
+            axis.insert(i, 1)
+            grain_b.rotate_sites(theta=np.radians(180), axis=axis, anchor=anchor)
+            if grain_a != grain_b:
+                break
+        # grain_b = grain_a.copy()
+        # csl_t = csl.transpose()
+        # if sum(abs(csl_t[0]) - abs(csl_t[1])) > 0:
+        #     axis = (0, 1, 0)
+        # else:
+        #     axis = (1, 0, 0)
+        # anchor = grain_b.lattice.get_cartesian_coords(np.array([.0, .0, .0]))
+        # # print(axis, anchor)
+        # # exit()
+        # grain_b.rotate_sites(theta=np.radians(180), axis=axis, anchor=anchor)
         return grain_b
 
     @classmethod
@@ -264,7 +270,7 @@ class Grain(Structure):
         scale_vector = [1, 1]
         scale_vector.insert(direction, uc_b)
         temp_a.make_supercell(scale_vector)
-        grain_b = self.get_b_from_a(temp_a, csl)
+        grain_b = self.get_b_from_a(temp_a)
         # make sure that all fractional coordinates that equal to 1 will become 0
         grain_b.make_supercell([1, 1, 1])
 
